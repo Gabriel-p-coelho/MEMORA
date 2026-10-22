@@ -220,7 +220,6 @@ export default function Biblioteca({ navigation }) {
           )}
         </View>
 
-        {/* flexGrow: 0 evita que o ScrollView horizontal estique na vertical */}
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
