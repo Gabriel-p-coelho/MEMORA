@@ -10,7 +10,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
-const CORES = {
+const C = {
   fundo: '#F4F5F9',
   branco: '#FFFFFF',
   azul: '#202A43',
@@ -28,7 +28,7 @@ const OBRAS = [
     titulo: 'Duna',
     tipo: 'Livros',
     status: 'Concluído',
-    cor: CORES.pessego,
+    cor: C.pessego,
     icone: 'book-outline',
     avaliacao: '4,5',
   },
@@ -37,7 +37,7 @@ const OBRAS = [
     titulo: 'Dom Casmurro',
     tipo: 'Livros',
     status: 'Em andamento',
-    cor: CORES.pessego,
+    cor: C.pessego,
     icone: 'book-outline',
   },
   {
@@ -45,7 +45,7 @@ const OBRAS = [
     titulo: 'The Bear',
     tipo: 'Séries',
     status: 'Em andamento',
-    cor: CORES.verde,
+    cor: C.verde,
     icone: 'tv-outline',
   },
   {
@@ -53,7 +53,7 @@ const OBRAS = [
     titulo: 'Parasita',
     tipo: 'Filmes',
     status: 'Planejado',
-    cor: CORES.azulCartao,
+    cor: C.azulCartao,
     icone: 'film-outline',
   },
 ];
@@ -79,13 +79,13 @@ const ICONES_TIPO = {
 function corDoStatus(status) {
   switch (status) {
     case 'Concluído':
-      return CORES.verde;
+      return C.verde;
     case 'Planejado':
-      return CORES.pessego;
+      return C.pessego;
     case 'Abandonado':
-      return CORES.borda;
+      return C.borda;
     default:
-      return CORES.lavanda;
+      return C.lavanda;
   }
 }
 
@@ -107,7 +107,7 @@ function FiltroChip({ titulo, selecionado, onPress, icone, compacto }) {
         <Ionicons
           name={icone}
           size={compacto ? 14 : 16}
-          color={selecionado ? CORES.branco : CORES.azul}
+          color={selecionado ? C.branco : C.azul}
           style={styles.chipIcone}
         />
       ) : null}
@@ -126,7 +126,7 @@ function FiltroChip({ titulo, selecionado, onPress, icone, compacto }) {
 }
 
 function ObraCard({ obra, onAbrir }) {
-  const corIcone = obra.cor === CORES.azulCartao ? CORES.branco : CORES.azul;
+  const corIcone = obra.cor === C.azulCartao ? C.branco : C.azul;
 
   return (
     <TouchableOpacity
@@ -198,14 +198,14 @@ export default function Biblioteca({ navigation }) {
         </View>
 
         <View style={styles.buscaContainer}>
-          <Ionicons name="search-outline" size={20} color={CORES.texto} />
+          <Ionicons name="search-outline" size={20} color={C.texto} />
 
           <TextInput
             style={styles.campoBusca}
             value={busca}
             onChangeText={setBusca}
             placeholder="Buscar por título"
-            placeholderTextColor={CORES.texto}
+            placeholderTextColor={C.texto}
             returnKeyType="search"
           />
 
@@ -215,7 +215,7 @@ export default function Biblioteca({ navigation }) {
               accessibilityLabel="Limpar busca"
               hitSlop={10}
             >
-              <Ionicons name="close-circle" size={20} color={CORES.texto} />
+              <Ionicons name="close-circle" size={20} color={C.texto} />
             </TouchableOpacity>
           )}
         </View>
@@ -269,7 +269,7 @@ export default function Biblioteca({ navigation }) {
           </View>
         ) : (
           <View style={styles.semResultados}>
-            <Ionicons name="search-outline" size={32} color={CORES.texto} />
+            <Ionicons name="search-outline" size={32} color={C.texto} />
 
             <Text style={styles.semResultadosTitulo}>
               Nenhuma obra encontrada
@@ -288,7 +288,7 @@ export default function Biblioteca({ navigation }) {
 const styles = StyleSheet.create({
   tela: {
     flex: 1,
-    backgroundColor: CORES.fundo,
+    backgroundColor: C.fundo,
   },
 
   conteudo: {
@@ -307,21 +307,21 @@ const styles = StyleSheet.create({
   tituloPagina: {
     fontSize: 26,
     fontWeight: '800',
-    color: CORES.azul,
+    color: C.azul,
   },
 
   contagem: {
     fontSize: 12,
     fontWeight: '700',
-    color: CORES.texto,
+    color: C.texto,
   },
 
   buscaContainer: {
     height: 48,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: CORES.borda,
-    backgroundColor: CORES.branco,
+    borderColor: C.borda,
+    backgroundColor: C.branco,
     paddingHorizontal: 15,
     flexDirection: 'row',
     alignItems: 'center',
@@ -331,7 +331,7 @@ const styles = StyleSheet.create({
   campoBusca: {
     flex: 1,
     fontSize: 15,
-    color: CORES.azul,
+    color: C.azul,
     marginLeft: 10,
     paddingVertical: 0,
   },
@@ -353,8 +353,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: CORES.borda,
-    backgroundColor: CORES.branco,
+    borderColor: C.borda,
+    backgroundColor: C.branco,
     paddingHorizontal: 16,
   },
 
@@ -365,8 +365,8 @@ const styles = StyleSheet.create({
   },
 
   chipAtivo: {
-    backgroundColor: CORES.azul,
-    borderColor: CORES.azul,
+    backgroundColor: C.azul,
+    borderColor: C.azul,
   },
 
   chipIcone: {
@@ -374,7 +374,7 @@ const styles = StyleSheet.create({
   },
 
   chipTexto: {
-    color: CORES.texto,
+    color: C.texto,
     fontSize: 14,
   },
 
@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
   },
 
   chipTextoAtivo: {
-    color: CORES.branco,
+    color: C.branco,
     fontWeight: '600',
   },
 
@@ -408,7 +408,7 @@ const styles = StyleSheet.create({
   },
 
   obraTitulo: {
-    color: CORES.azul,
+    color: C.azul,
     fontSize: 14,
     fontWeight: '700',
     marginTop: 8,
@@ -430,14 +430,14 @@ const styles = StyleSheet.create({
   },
 
   statusTexto: {
-    color: CORES.azul,
+    color: C.azul,
     fontSize: 11,
     fontWeight: '500',
   },
 
   avaliacao: {
     fontSize: 12,
-    color: CORES.texto,
+    color: C.texto,
   },
 
   semResultados: {
@@ -447,14 +447,14 @@ const styles = StyleSheet.create({
   },
 
   semResultadosTitulo: {
-    color: CORES.azul,
+    color: C.azul,
     fontWeight: '700',
     fontSize: 17,
     marginTop: 10,
   },
 
   semResultadosTexto: {
-    color: CORES.texto,
+    color: C.texto,
     fontSize: 14,
     textAlign: 'center',
     marginTop: 6,

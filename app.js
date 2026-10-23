@@ -11,8 +11,8 @@ import {
 
 import HomeScreen from './screens/HomeScreen';
 import Biblioteca from './screens/Biblioteca';
+import AdicionarConteudo from './screens/AdicionarConteudo';
 import {
-  AdicionarConteudoScreen,
   DetalhesObraScreen,
   DiarioScreen,
   EstatisticasScreen,
@@ -22,7 +22,7 @@ import {
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-const CORES = {
+const C = {
   fundo: '#F4F5F9',
   azul: '#202A43',
   inativo: '#6B7798',
@@ -31,7 +31,7 @@ const CORES = {
 
 const temaNavegacao = {
   ...DefaultTheme,
-  colors: { ...DefaultTheme.colors, background: CORES.fundo },
+  colors: { ...DefaultTheme.colors, background: C.fundo },
 };
 
 const TelaVazia = () => null;
@@ -44,11 +44,11 @@ function Abas() {
       initialRouteName="Início"
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarActiveTintColor: CORES.azul,
-        tabBarInactiveTintColor: CORES.inativo,
+        tabBarActiveTintColor: C.azul,
+        tabBarInactiveTintColor: C.inativo,
         tabBarStyle: {
           height: 64 + insets.bottom,
-          backgroundColor: CORES.branco,
+          backgroundColor: C.branco,
           borderTopColor: '#E9EBF2',
           paddingTop: 8,
           paddingBottom: insets.bottom + 6,
@@ -62,13 +62,13 @@ function Abas() {
                   width: 52,
                   height: 52,
                   borderRadius: 26,
-                  backgroundColor: CORES.azul,
+                  backgroundColor: C.azul,
                   alignItems: 'center',
                   justifyContent: 'center',
                   marginTop: -16,
                 }}
               >
-                <Ionicons name="add" size={30} color={CORES.branco} />
+                <Ionicons name="add" size={30} color={C.branco} />
               </View>
             );
           }
@@ -115,8 +115,7 @@ export default function App() {
           <Stack.Screen name="Tabs" component={Abas} />
           <Stack.Screen
             name="AdicionarConteudo"
-            component={AdicionarConteudoScreen}
-            options={{ presentation: 'modal' }}
+            component={AdicionarConteudo}
           />
           <Stack.Screen name="DetalhesObra" component={DetalhesObraScreen} />
           <Stack.Screen name="Diario" component={DiarioScreen} />
