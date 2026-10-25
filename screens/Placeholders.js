@@ -44,21 +44,6 @@ function Botao({ rotulo, onPress, secundario }) {
   );
 }
 
-export function AdicionarConteudoScreen({ navigation, route }) {
-  const editando = route.params?.id;
-  return (
-    <Base
-      titulo={editando ? 'Editar conteúdo' : 'Adicionar conteúdo'}
-      descricao="Categoria (Filme, Série, Livro, Jogo, Álbum) e campos adaptados."
-      navigation={navigation}
-      voltar
-    >
-      <Botao rotulo="Salvar" onPress={() => navigation.goBack()} />
-      <Botao rotulo="Cancelar" secundario onPress={() => navigation.goBack()} />
-    </Base>
-  );
-}
-
 export function DetalhesObraScreen({ navigation, route }) {
   const { id } = route.params;
   return (

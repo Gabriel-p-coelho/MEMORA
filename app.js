@@ -1,14 +1,19 @@
+import { useEffect, useState } from 'react';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { View } from 'react-native';
+import { View, ActivityIndicator } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 
+import firebase from './config/config';
+
+import Login from './screens/Login';
+import Cadastro from './screens/Cadastro';
 import HomeScreen from './screens/HomeScreen';
 import Biblioteca from './screens/Biblioteca';
 import AdicionarConteudo from './screens/AdicionarConteudo';
@@ -111,7 +116,12 @@ export default function App() {
     <SafeAreaProvider>
       <StatusBar style="dark" />
       <NavigationContainer theme={temaNavegacao}>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Navigator
+          initialRouteName="Login"
+          screenOptions={{ headerShown: false }}
+        >
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Cadastro" component={Cadastro} />
           <Stack.Screen name="Tabs" component={Abas} />
           <Stack.Screen
             name="AdicionarConteudo"
