@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import firebase from '../config/config';
 
 const C = {
   fundo: '#F4F5F9',
@@ -22,42 +23,6 @@ const C = {
   pessego: '#F6C4A8',
 };
 
-const OBRAS = [
-  {
-    id: '1',
-    titulo: 'Duna',
-    tipo: 'Livros',
-    status: 'Concluído',
-    cor: C.pessego,
-    icone: 'book-outline',
-    avaliacao: '4,5',
-  },
-  {
-    id: '2',
-    titulo: 'Dom Casmurro',
-    tipo: 'Livros',
-    status: 'Em andamento',
-    cor: C.pessego,
-    icone: 'book-outline',
-  },
-  {
-    id: '3',
-    titulo: 'The Bear',
-    tipo: 'Séries',
-    status: 'Em andamento',
-    cor: C.verde,
-    icone: 'tv-outline',
-  },
-  {
-    id: '4',
-    titulo: 'Parasita',
-    tipo: 'Filmes',
-    status: 'Planejado',
-    cor: C.azulCartao,
-    icone: 'film-outline',
-  },
-];
-
 const TIPOS = ['Todos', 'Filmes', 'Séries', 'Livros', 'Jogos', 'Álbuns'];
 
 const STATUS = [
@@ -67,6 +32,23 @@ const STATUS = [
   'Concluído',
   'Abandonado',
 ];
+
+// No banco a categoria é salva no singular; a biblioteca usa o plural.
+const TIPO_DA_CATEGORIA = {
+  Filme: 'Filmes',
+  Série: 'Séries',
+  Livro: 'Livros',
+  Jogo: 'Jogos',
+  Álbum: 'Álbuns',
+};
+
+const COR_DO_TIPO = {
+  Filmes: C.azulCartao,
+  Séries: C.menta,
+  Livros: C.pessego,
+  Jogos: C.lavanda,
+  Álbuns: C.borda,
+};
 
 const ICONES_TIPO = {
   Filmes: 'film-outline',
@@ -79,7 +61,7 @@ const ICONES_TIPO = {
 function corDoStatus(status) {
   switch (status) {
     case 'Concluído':
-      return C.verde;
+      return C.menta;
     case 'Planejado':
       return C.pessego;
     case 'Abandonado':
@@ -161,12 +143,46 @@ function ObraCard({ obra, onAbrir }) {
 }
 
 export default function Biblioteca({ navigation }) {
+  const [obras, setObras] = useState([]);
   const [busca, setBusca] = useState('');
   const [tipoSelecionado, setTipoSelecionado] = useState('Todos');
   const [statusSelecionado, setStatusSelecionado] = useState('Todos');
 
+  // Equivalente ao componentDidMount: fica escutando as obras do usuário.
+  useEffect(() => {
+    const uid = firebase.auth().currentUser.uid;
+    const ref = firebase.database().ref('/usuarios/' + uid + '/obras');
+
+    ref.on('value', (snapshot) => {
+      const data = snapshot.val();
+
+      if (data == null) {
+        setObras([]);
+        return;
+      }
+
+      // Object.keys (em vez de Object.values) para guardar o id de cada obra,
+      // que vai ser usado para abrir os detalhes.
+      const lista = Object.keys(data).map((id) => {
+        const tipo = TIPO_DA_CATEGORIA[data[id].categoria];
+        return {
+          ...data[id],
+          id: id,
+          tipo: tipo,
+          cor: COR_DO_TIPO[tipo],
+          icone: ICONES_TIPO[tipo],
+          avaliacao: data[id].nota,
+        };
+      });
+
+      setObras(lista.reverse()); // mais recentes primeiro
+    });
+
+    return () => ref.off();
+  }, []);
+
   const obrasFiltradas = useMemo(() => {
-    return OBRAS.filter((obra) => {
+    return obras.filter((obra) => {
       const correspondeBusca = obra.titulo
         .toLowerCase()
         .includes(busca.trim().toLowerCase());
@@ -179,7 +195,7 @@ export default function Biblioteca({ navigation }) {
 
       return correspondeBusca && correspondeTipo && correspondeStatus;
     });
-  }, [busca, tipoSelecionado, statusSelecionado]);
+  }, [obras, busca, tipoSelecionado, statusSelecionado]);
 
   const total = obrasFiltradas.length;
 
