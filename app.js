@@ -17,11 +17,11 @@ import Cadastro from './screens/Cadastro';
 import HomeScreen from './screens/HomeScreen';
 import Biblioteca from './screens/Biblioteca';
 import AdicionarConteudo from './screens/AdicionarConteudo';
+import Perfil from './screens/Perfil';
 import {
   DetalhesObraScreen,
   DiarioScreen,
   EstatisticasScreen,
-  PerfilScreen,
 } from './screens/Placeholders.js';
 
 const Stack = createNativeStackNavigator();
@@ -106,7 +106,7 @@ function Abas() {
         })}
       />
       <Tab.Screen name="Estatísticas" component={EstatisticasScreen} />
-      <Tab.Screen name="Perfil" component={PerfilScreen} />
+      <Tab.Screen name="Perfil" component={Perfil} />
     </Tab.Navigator>
   );
 }
