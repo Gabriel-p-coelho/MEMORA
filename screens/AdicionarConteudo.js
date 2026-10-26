@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -30,6 +30,26 @@ export default function AdicionarConteudo({ navigation, route }) {
   const [valores, setValores] = useState({});
 
   const config = CATEGORIAS[categoria];
+
+  // Modo edição: carrega a obra do banco e preenche o formulário.
+  useEffect(() => {
+    if (!editando) return;
+    const uid = firebase.auth().currentUser.uid;
+
+    firebase
+      .database()
+      .ref('/usuarios/' + uid + '/obras/' + editando)
+      .once('value')
+      .then((snapshot) => {
+        const obra = snapshot.val();
+        if (!obra) return;
+        const { categoria: cat, status: st, criadaEm, ...resto } = obra;
+        setCategoria(cat);
+        setStatus(st);
+        setValores(resto);
+      });
+  }, []);
+
   const mudar = (chave, texto) => setValores((v) => ({ ...v, [chave]: texto }));
   const fechar = () => navigation.goBack();
 
@@ -47,18 +67,26 @@ export default function AdicionarConteudo({ navigation, route }) {
     }
 
     const uid = firebase.auth().currentUser.uid;
+    const obras = firebase.database().ref('/usuarios/' + uid + '/obras');
 
-    firebase
-      .database()
-      .ref('/usuarios/' + uid + '/obras')
-      .push({
+    if (editando) {
+      // update mantém o que não mudou (ex.: criadaEm).
+      obras.child(editando).update({
+        ...valores,
+        categoria: categoria,
+        status: status,
+      });
+      alert('Obra atualizada!');
+    } else {
+      obras.push({
         ...valores,
         categoria: categoria,
         status: status,
         criadaEm: Date.now(),
       });
+      alert('Obra salva!');
+    }
 
-    alert('Obra salva!');
     fechar();
   }
 
@@ -143,7 +171,7 @@ export default function AdicionarConteudo({ navigation, route }) {
             onPress={salvar}
             activeOpacity={0.8}
             accessibilityRole="button">
-            <Text style={styles.botaoSalvarTexto}>Salvar na biblioteca</Text>
+            <Text style={styles.botaoSalvarTexto}>{editando ? 'Salvar alterações' : 'Salvar na biblioteca'}</Text>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>

@@ -3,7 +3,7 @@ import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { View, ActivityIndicator } from 'react-native';
+import { View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import {
   SafeAreaProvider,
@@ -18,8 +18,8 @@ import HomeScreen from './screens/HomeScreen';
 import Biblioteca from './screens/Biblioteca';
 import AdicionarConteudo from './screens/AdicionarConteudo';
 import Perfil from './screens/Perfil';
+import DetalhesObra from './screens/DetalhesObra';
 import {
-  DetalhesObraScreen,
   DiarioScreen,
   EstatisticasScreen,
 } from './screens/Placeholders.js';
@@ -127,7 +127,7 @@ export default function App() {
             name="AdicionarConteudo"
             component={AdicionarConteudo}
           />
-          <Stack.Screen name="DetalhesObra" component={DetalhesObraScreen} />
+          <Stack.Screen name="DetalhesObra" component={DetalhesObra} />
           <Stack.Screen name="Diario" component={DiarioScreen} />
         </Stack.Navigator>
       </NavigationContainer>

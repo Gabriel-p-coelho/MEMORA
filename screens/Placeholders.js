@@ -44,19 +44,6 @@ function Botao({ rotulo, onPress, secundario }) {
   );
 }
 
-export function DetalhesObraScreen({ navigation, route }) {
-  const { id } = route.params;
-  return (
-    <Base titulo="Detalhes da obra" descricao={`id: ${id}`} navigation={navigation} voltar>
-      <Botao
-        rotulo="Editar"
-        onPress={() => navigation.navigate('AdicionarConteudo', { id })}
-      />
-      <Botao rotulo="Excluir" secundario onPress={() => navigation.goBack()} />
-    </Base>
-  );
-}
-
 export function DiarioScreen({ navigation }) {
   return (
     <Base
@@ -70,14 +57,6 @@ export function DiarioScreen({ navigation }) {
 
 export function EstatisticasScreen() {
   return <Base titulo="Estatísticas" descricao="Mês · Ano · Tudo" />;
-}
-
-export function PerfilScreen({ navigation }) {
-  return (
-    <Base titulo="Perfil" descricao="Preferências e sua jornada cultural.">
-      <Botao rotulo="Meu Diário" secundario onPress={() => navigation.navigate('Diario')} />
-    </Base>
-  );
 }
 
 const styles = StyleSheet.create({

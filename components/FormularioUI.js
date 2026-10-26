@@ -24,10 +24,8 @@ export const C = {
 
 export const STATUS = ['Planejado', 'Em andamento', 'Concluído', 'Abandonado'];
 
-// Campos de cada categoria, seguindo o Figma (cada sublista é uma linha do formulário).
 export const CATEGORIAS = {
   Filme: {
-    // Para filmes não existe "Em andamento".
     status: ['Planejado', 'Concluído', 'Abandonado'],
     icone: 'film-outline',
     imagem: 'Pôster',
@@ -195,7 +193,6 @@ function lerData(texto) {
   return isNaN(data.getTime()) ? null : data;
 }
 
-// Aceita só números e uma vírgula (o ponto vira vírgula), com no máximo 1 casa decimal.
 function limparNota(texto) {
   const t = texto.replace(/\./g, ',').replace(/[^0-9,]/g, '');
   const [inteiro, ...resto] = t.split(',');
@@ -572,7 +569,6 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   botaoImagemTexto: { fontSize: 14, fontWeight: '600', color: C.azul },
-
   campo: { flex: 1 },
   linha: { flexDirection: 'row', gap: 12 },
   input: {
@@ -585,7 +581,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: C.azul,
   },
-
   inputErro: { borderColor: C.erro },
   erro: { fontSize: 12, color: C.erro, marginTop: 4 },
   inputData: {
@@ -595,7 +590,6 @@ const styles = StyleSheet.create({
   },
   inputDataTexto: { flex: 1, fontSize: 15, color: C.azul },
   inputDataDica: { flex: 1, fontSize: 15, color: C.placeholder },
-
   calFundo: {
     flex: 1,
     backgroundColor: 'rgba(32, 42, 67, 0.45)',
