@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -9,7 +8,6 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
-
 import firebase from './config/config';
 
 import Login from './screens/Login';
@@ -19,10 +17,7 @@ import Biblioteca from './screens/Biblioteca';
 import AdicionarConteudo from './screens/AdicionarConteudo';
 import Perfil from './screens/Perfil';
 import DetalhesObra from './screens/DetalhesObra';
-import {
-  DiarioScreen,
-  EstatisticasScreen,
-} from './screens/Placeholders.js';
+import { DiarioScreen, EstatisticasScreen } from './screens/Placeholders.js';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -37,6 +32,13 @@ const C = {
 const temaNavegacao = {
   ...DefaultTheme,
   colors: { ...DefaultTheme.colors, background: C.fundo },
+};
+
+const icones = {
+  Início: ['home', 'home-outline'],
+  Biblioteca: ['grid', 'grid-outline'],
+  Estatísticas: ['stats-chart', 'stats-chart-outline'],
+  Perfil: ['person', 'person-outline'],
 };
 
 const TelaVazia = () => null;
@@ -58,7 +60,10 @@ function Abas() {
           paddingTop: 8,
           paddingBottom: insets.bottom + 6,
         },
-        tabBarLabelStyle: { fontSize: 11, fontWeight: '500' },
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: '500',
+        },
         tabBarIcon: ({ color, focused }) => {
           if (route.name === 'Adicionar') {
             return (
@@ -71,24 +76,23 @@ function Abas() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   marginTop: -16,
-                }}
-              >
+                }}>
                 <Ionicons name="add" size={30} color={C.branco} />
               </View>
             );
           }
 
-          const icones = {
-            Início: focused ? 'home' : 'home-outline',
-            Biblioteca: focused ? 'grid' : 'grid-outline',
-            Estatísticas: focused ? 'stats-chart' : 'stats-chart-outline',
-            Perfil: focused ? 'person' : 'person-outline',
-          };
+          const [ativo, inativo] = icones[route.name];
 
-          return <Ionicons name={icones[route.name]} size={24} color={color} />;
+          return (
+            <Ionicons
+              name={focused ? ativo : inativo}
+              size={24}
+              color={color}
+            />
+          );
         },
-      })}
-    >
+      })}>
       <Tab.Screen name="Início" component={HomeScreen} />
       <Tab.Screen name="Biblioteca" component={Biblioteca} />
       <Tab.Screen
@@ -96,7 +100,6 @@ function Abas() {
         component={TelaVazia}
         options={{
           tabBarLabel: '',
-          tabBarAccessibilityLabel: 'Adicionar obra',
         }}
         listeners={({ navigation }) => ({
           tabPress: (e) => {
@@ -118,8 +121,7 @@ export default function App() {
       <NavigationContainer theme={temaNavegacao}>
         <Stack.Navigator
           initialRouteName="Login"
-          screenOptions={{ headerShown: false }}
-        >
+          screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="Cadastro" component={Cadastro} />
           <Stack.Screen name="Tabs" component={Abas} />
