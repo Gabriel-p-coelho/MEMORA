@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CommonActions } from '@react-navigation/native';
@@ -14,29 +14,72 @@ const C = {
   linha: '#E6E9F3',
 };
 
-const RESUMO = [
-  { rotulo: 'Na biblioteca', valor: '14' },
-  { rotulo: 'Concluídas', valor: '7' },
-  { rotulo: 'Nota média', valor: '4,3' },
+// Categorias na ordem em que aparecem em "Sua jornada".
+const JORNADA = [
+  { categoria: 'Livro', rotulo: 'livros' },
+  { categoria: 'Filme', rotulo: 'filmes' },
+  { categoria: 'Série', rotulo: 'séries' },
+  { categoria: 'Jogo', rotulo: 'jogos' },
+  { categoria: 'Álbum', rotulo: 'álbuns' },
 ];
 
-const JORNADA = [
-  { n: 6, tipo: 'livros' },
-  { n: 4, tipo: 'filmes' },
-  { n: 2, tipo: 'séries' },
-  { n: 2, tipo: 'jogos' },
-  { n: 2, tipo: 'Albuns' },
-];
+// "Diário cultural desde outubro de 2026" (mês em que a conta foi criada).
+function desdeQuando() {
+  const user = firebase.auth().currentUser;
+  const criada = user && user.metadata && user.metadata.creationTime;
+  if (!criada) return '';
+  const mes = new Date(criada).toLocaleDateString('pt-BR', {
+    month: 'long',
+    year: 'numeric',
+  });
+  return 'Diário cultural desde ' + mes;
+}
 
 function nomeDoUsuario() {
   const user = firebase.auth().currentUser;
-  const base = user && user.email ? user.email.split('@')[0] : 'Gabriel';
+  const base = user && user.email ? user.email.split('@')[0] : 'Usuário';
   return base.charAt(0).toUpperCase() + base.slice(1);
 }
 
 export default function Perfil({ navigation }) {
-  const [haptico, setHaptico] = useState(true);
+  const [obras, setObras] = useState([]);
   const nome = nomeDoUsuario();
+
+  // Fica escutando as obras do usuário (igual à Biblioteca).
+  useEffect(() => {
+    const uid = firebase.auth().currentUser.uid;
+    const ref = firebase.database().ref('/usuarios/' + uid + '/obras');
+
+    const escutar = ref.on('value', (snapshot) => {
+      const data = snapshot.val();
+
+      if (data == null) {
+        setObras([]);
+        return;
+      }
+
+      setObras(Object.keys(data).map((id) => ({ ...data[id], id: id })));
+    });
+
+    return () => ref.off('value', escutar);
+  }, []);
+
+  const concluidas = obras.filter((obra) => obra.status === 'Concluído').length;
+
+  const notas = obras
+    .map((obra) => parseFloat(String(obra.nota || '').replace(',', '.')))
+    .filter((n) => !isNaN(n));
+  const media = notas.length
+    ? (Math.round((notas.reduce((a, b) => a + b, 0) / notas.length) * 10) / 10)
+        .toString()
+        .replace('.', ',')
+    : '–';
+
+  const resumo = [
+    { rotulo: 'Na biblioteca', valor: String(obras.length) },
+    { rotulo: 'Concluídas', valor: String(concluidas) },
+    { rotulo: 'Nota média', valor: media },
+  ];
 
   function sair() {
     firebase
@@ -62,11 +105,11 @@ export default function Perfil({ navigation }) {
             <Text style={s.avatarLetra}>{nome.charAt(0)}</Text>
           </View>
           <Text style={s.nome}>{nome}</Text>
-          <Text style={s.desde}>Diário cultural desde outubro de 2026</Text>
+          <Text style={s.desde}>{desdeQuando()}</Text>
         </View>
 
         <View style={s.resumo}>
-          {RESUMO.map((item) => (
+          {resumo.map((item) => (
             <View key={item.rotulo} style={s.cartaoResumo}>
               <Text style={s.resumoRotulo}>{item.rotulo}</Text>
               <Text style={s.resumoValor}>{item.valor}</Text>
@@ -76,23 +119,6 @@ export default function Perfil({ navigation }) {
 
         <Text style={s.secao}>Preferências</Text>
         <View style={s.cartao}>
-          <Pressable
-            style={[s.linha, s.linhaComDivisor]}
-            onPress={() => setHaptico(!haptico)}
-            accessibilityRole="checkbox"
-            accessibilityState={{ checked: haptico }}
-          >
-            <View style={{ flex: 1 }}>
-              <Text style={s.linhaTitulo}>Feedback háptico</Text>
-              <Text style={s.linhaDescricao}>
-                Vibração leve ao salvar ou concluir
-              </Text>
-            </View>
-            <View style={[s.checkbox, !haptico && s.checkboxVazio]}>
-              {haptico && <Ionicons name="checkmark" size={16} color={C.branco} />}
-            </View>
-          </Pressable>
-
           <Pressable
             style={s.linha}
             onPress={() => navigation.navigate('Diario')}
@@ -106,8 +132,11 @@ export default function Perfil({ navigation }) {
         <Text style={s.secao}>Sua jornada</Text>
         <View style={s.jornada}>
           {JORNADA.map((item) => (
-            <Text key={item.tipo} style={s.jornadaItem}>
-              <Text style={s.jornadaNumero}>{item.n}</Text> {item.tipo}
+            <Text key={item.categoria} style={s.jornadaItem}>
+              <Text style={s.jornadaNumero}>
+                {obras.filter((obra) => obra.categoria === item.categoria).length}
+              </Text>{' '}
+              {item.rotulo}
             </Text>
           ))}
         </View>
@@ -168,20 +197,7 @@ const s = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  linhaComDivisor: { borderBottomWidth: 1, borderBottomColor: C.linha },
   linhaTitulo: { fontSize: 14, fontWeight: '600', color: C.azul },
-  linhaDescricao: { fontSize: 12, color: C.texto, marginTop: 2 },
-  checkbox: {
-    width: 24,
-    height: 24,
-    borderRadius: 6,
-    backgroundColor: C.azul,
-    borderWidth: 2,
-    borderColor: C.azul,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  checkboxVazio: { backgroundColor: C.branco },
 
   jornada: {
     flexDirection: 'row',

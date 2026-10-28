@@ -12,6 +12,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import firebase from '../config/config';
+import { vibrar } from '../components/Haptico';
 import {
   C,
   STATUS,
@@ -21,7 +22,7 @@ import {
   SeletorCategoria,
   SecaoImagem,
   SeletorStatus,
-} from '../components/FormularioUI';
+} from '../components/Formulario';
 
 export default function AdicionarConteudo({ navigation, route }) {
   const editando = route.params?.id;
@@ -75,6 +76,7 @@ export default function AdicionarConteudo({ navigation, route }) {
         ...valores,
         categoria: categoria,
         status: status,
+        atualizadaEm: Date.now(),
       });
       alert('Obra atualizada!');
     } else {
@@ -87,6 +89,7 @@ export default function AdicionarConteudo({ navigation, route }) {
       alert('Obra salva!');
     }
 
+    vibrar();
     fechar();
   }
 
