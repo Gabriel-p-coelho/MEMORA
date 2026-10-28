@@ -124,9 +124,8 @@ function AtividadeRecente() {
   );
 }
 
-export default function HomeScreen({ navigation }) {
-  const abrirCadastro = () => navigation.navigate('AdicionarConteudo');
 
+export default function HomeScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.tela}>
       <ScrollView
@@ -139,7 +138,9 @@ export default function HomeScreen({ navigation }) {
           Sua história, em cada descoberta
         </Text>
         <ResumoMensal />
-        <BibliotecaVazia onAdicionar={abrirCadastro} />
+        <BibliotecaVazia
+          onAdicionar={() => navigation.navigate('AdicionarConteudo')}
+        />
         <AtividadeRecente />
       </ScrollView>
     </SafeAreaView>

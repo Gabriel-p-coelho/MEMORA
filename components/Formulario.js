@@ -333,7 +333,7 @@ function CampoData({ campo, valor, onChange }) {
         <Ionicons name="calendar-outline" size={18} color={C.texto} />
       </TouchableOpacity>
 
-      {aberto ? (
+      {aberto && (
         <Calendario
           valor={valor}
           onFechar={() => setAberto(false)}
@@ -342,7 +342,7 @@ function CampoData({ campo, valor, onChange }) {
             setAberto(false);
           }}
         />
-      ) : null}
+      )}
     </View>
   );
 }
@@ -569,6 +569,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   botaoImagemTexto: { fontSize: 14, fontWeight: '600', color: C.azul },
+
   campo: { flex: 1 },
   linha: { flexDirection: 'row', gap: 12 },
   input: {
@@ -581,6 +582,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: C.azul,
   },
+
   inputErro: { borderColor: C.erro },
   erro: { fontSize: 12, color: C.erro, marginTop: 4 },
   inputData: {
@@ -590,6 +592,7 @@ const styles = StyleSheet.create({
   },
   inputDataTexto: { flex: 1, fontSize: 15, color: C.azul },
   inputDataDica: { flex: 1, fontSize: 15, color: C.placeholder },
+
   calFundo: {
     flex: 1,
     backgroundColor: 'rgba(32, 42, 67, 0.45)',
