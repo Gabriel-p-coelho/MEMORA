@@ -13,6 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 export const C = {
   fundo: '#F4F5F9',
   branco: '#FFFFFF',
+  menta: '#8FE0CB',
   azul: '#202A43',
   lavanda: '#DCE3F4',
   texto: '#55607A',

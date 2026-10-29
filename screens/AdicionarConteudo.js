@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
+  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -32,7 +33,7 @@ export default function AdicionarConteudo({ navigation, route }) {
 
   const config = CATEGORIAS[categoria];
 
-  // Modo edição: carrega a obra do banco e preenche o formulário.
+  // modo edição
   useEffect(() => {
     if (!editando) return;
     const uid = firebase.auth().currentUser.uid;
@@ -44,9 +45,9 @@ export default function AdicionarConteudo({ navigation, route }) {
       .then((snapshot) => {
         const obra = snapshot.val();
         if (!obra) return;
-        const { categoria: cat, status: st, criadaEm, ...resto } = obra;
-        setCategoria(cat);
-        setStatus(st);
+        const { categoria: categ, status: stat, criadaEm, ...resto } = obra;
+        setCategoria(categ);
+        setStatus(stat);
         setValores(resto);
       });
   }, []);
@@ -54,7 +55,6 @@ export default function AdicionarConteudo({ navigation, route }) {
   const mudar = (chave, texto) => setValores((v) => ({ ...v, [chave]: texto }));
   const fechar = () => navigation.goBack();
 
-  // Se o status escolhido não existe na nova categoria, volta para "Planejado".
   function trocarCategoria(nome) {
     setCategoria(nome);
     const permitidos = CATEGORIAS[nome].status || STATUS;
@@ -63,7 +63,7 @@ export default function AdicionarConteudo({ navigation, route }) {
 
   function salvar() {
     if (!valores.titulo) {
-      alert('Digite o título.');
+      Alert.alert('Erro', 'Digite o título');
       return;
     }
 
@@ -71,14 +71,13 @@ export default function AdicionarConteudo({ navigation, route }) {
     const obras = firebase.database().ref('/usuarios/' + uid + '/obras');
 
     if (editando) {
-      // update mantém o que não mudou (ex.: criadaEm).
       obras.child(editando).update({
         ...valores,
         categoria: categoria,
         status: status,
         atualizadaEm: Date.now(),
       });
-      alert('Obra atualizada!');
+      Alert.alert('Pronto!', 'Obra atualizada com sucesso!');
     } else {
       obras.push({
         ...valores,
@@ -86,9 +85,8 @@ export default function AdicionarConteudo({ navigation, route }) {
         status: status,
         criadaEm: Date.now(),
       });
-      alert('Obra salva!');
+      Alert.alert('Pronto!', 'Obra salva com sucesso!');
     }
-
     vibrar();
     fechar();
   }
@@ -101,7 +99,6 @@ export default function AdicionarConteudo({ navigation, route }) {
         <View style={styles.cabecalho}>
           <Pressable
             onPress={fechar}
-            accessibilityLabel="Voltar"
             hitSlop={10}
             style={styles.voltar}>
             <Ionicons name="chevron-back" size={26} color={C.azul} />
@@ -165,15 +162,13 @@ export default function AdicionarConteudo({ navigation, route }) {
           <TouchableOpacity
             style={[styles.botaoRodape, styles.botaoCancelar]}
             onPress={fechar}
-            activeOpacity={0.8}
-            accessibilityRole="button">
+            activeOpacity={0.8}>
             <Text style={styles.botaoCancelarTexto}>Cancelar</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.botaoRodape, styles.botaoSalvar]}
             onPress={salvar}
-            activeOpacity={0.8}
-            accessibilityRole="button">
+            activeOpacity={0.8}>
             <Text style={styles.botaoSalvarTexto}>{editando ? 'Salvar alterações' : 'Salvar na biblioteca'}</Text>
           </TouchableOpacity>
         </View>

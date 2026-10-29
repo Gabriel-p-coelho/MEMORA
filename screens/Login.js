@@ -1,7 +1,13 @@
 import { useState } from 'react';
 import { View, Text, TouchableOpacity, Alert, StyleSheet } from 'react-native';
+import {
+  C,
+  TelaAuth,
+  Titulo,
+  Campo,
+  BotaoPrincipal,
+} from '../components/Auth';
 import firebase from '../config/config';
-import { C, TelaAuth, Titulo, Campo, BotaoPrincipal } from '../components/AuthUI';
 
 export default function Login({ navigation }) {
   const [usuario, setUsuario] = useState('');
@@ -23,7 +29,7 @@ export default function Login({ navigation }) {
         if (error.code == 'auth/invalid-email') {
           Alert.alert('Erro', 'Formato do email inválido');
         } else {
-          Alert.alert('Erro', 'Usuário ou senha incorretos');
+          Alert.alert('Erro', 'Email ou senha incorretos');
         }
       });
   }
@@ -31,14 +37,14 @@ export default function Login({ navigation }) {
   return (
     <TelaAuth>
       <Titulo
-        titulo={'Que bom ter você\nde volta.'}
+        titulo={'Que bom ter você de volta.'}
         subtitulo="Entre para continuar sua jornada cultural."
       />
 
       <Campo
-        label="Usuário"
+        label="Email"
         icone="person-outline"
-        placeholder="Digite seu usuário"
+        placeholder="Digite seu email"
         value={usuario}
         onChangeText={setUsuario}
       />
@@ -51,7 +57,11 @@ export default function Login({ navigation }) {
         onChangeText={setSenha}
       />
 
-      <BotaoPrincipal titulo="Entrar" onPress={entrar} carregando={carregando} />
+      <BotaoPrincipal
+        titulo="Entrar"
+        onPress={entrar}
+        carregando={carregando}
+      />
 
       <View style={s.rodape}>
         <Text style={s.rodapeTexto}>Ainda não tem uma conta?</Text>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
-  Modal,
+  Alert,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -12,9 +12,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import firebase from '../config/config';
-import { C, CATEGORIAS } from '../components/FormularioUI';
-
-const MENTA = '#8FE0CB';
+import { C, CATEGORIAS } from '../components/Formulario';
+import { vibrar } from '../components/Haptico';
 
 const ICONES_STATUS = {
   Planejado: 'time-outline',
@@ -73,7 +72,6 @@ export default function DetalhesObra({ navigation, route }) {
   const { id } = route.params;
   const insets = useSafeAreaInsets();
   const [obra, setObra] = useState(null);
-  const [confirmando, setConfirmando] = useState(false);
 
   const uid = firebase.auth().currentUser.uid;
   const caminho = '/usuarios/' + uid + '/obras/' + id;
@@ -90,10 +88,21 @@ export default function DetalhesObra({ navigation, route }) {
       .ref(caminho)
       .remove()
       .then(() => {
-        setConfirmando(false);
+        vibrar();
         navigation.goBack();
       })
-      .catch(() => alert('Não foi possível excluir. Tente novamente.'));
+      .catch(() => Alert.alert('Erro', 'Não foi possível excluir. Tente novamente.'));
+  }
+
+  function confirmarExclusao() {
+    Alert.alert(
+      'Excluir obra?',
+      '"' + obra.titulo + '" será removida da sua biblioteca. Essa ação não pode ser desfeita.',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Excluir', style: 'destructive', onPress: excluir },
+      ]
+    );
   }
 
   if (!obra) return <View style={styles.tela} />;
@@ -132,7 +141,6 @@ export default function DetalhesObra({ navigation, route }) {
   return (
     <View style={styles.tela}>
       <StatusBar style="light" />
-
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
         <View style={[styles.topo, { height: 250 + insets.top }]}>
           <Pressable
@@ -176,7 +184,9 @@ export default function DetalhesObra({ navigation, route }) {
               <Estrelas nota={temNota ? nota : 0} />
             </View>
           </View>
+
           {extra}
+
           {obra.opiniao ? (
             <View style={[styles.cartaoLargo, { gap: 6 }]}>
               <Text style={styles.cartaoTitulo}>Opinião</Text>
@@ -200,40 +210,12 @@ export default function DetalhesObra({ navigation, route }) {
           style={[styles.botao, styles.botaoExcluir]}
           activeOpacity={0.8}
           accessibilityRole="button"
-          onPress={() => setConfirmando(true)}>
+          onPress={confirmarExclusao}>
           <Ionicons name="trash-outline" size={18} color={C.azul} />
           <Text style={styles.botaoExcluirTexto}>Excluir</Text>
         </TouchableOpacity>
       </View>
 
-      <Modal
-        visible={confirmando}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setConfirmando(false)}>
-        <Pressable style={styles.modalFundo} onPress={() => setConfirmando(false)}>
-          <Pressable style={styles.modalCartao} onPress={() => {}}>
-            <Text style={styles.modalTitulo}>Excluir obra?</Text>
-            <Text style={styles.modalTexto}>
-              "{obra.titulo}" será removida da sua biblioteca. Essa ação não pode ser desfeita.
-            </Text>
-            <View style={styles.modalBotoes}>
-              <TouchableOpacity
-                style={[styles.modalBotao, styles.modalCancelar]}
-                activeOpacity={0.8}
-                onPress={() => setConfirmando(false)}>
-                <Text style={styles.botaoExcluirTexto}>Cancelar</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.modalBotao, styles.modalExcluir]}
-                activeOpacity={0.8}
-                onPress={excluir}>
-                <Text style={styles.botaoEditarTexto}>Excluir</Text>
-              </TouchableOpacity>
-            </View>
-          </Pressable>
-        </Pressable>
-      </Modal>
     </View>
   );
 }
@@ -328,7 +310,7 @@ const styles = StyleSheet.create({
     backgroundColor: C.lavanda,
     overflow: 'hidden',
   },
-  barraPreenchida: { height: 8, borderRadius: 4, backgroundColor: MENTA },
+  barraPreenchida: { height: 8, borderRadius: 4, backgroundColor: C.menta },
 
   opiniao: { fontSize: 14, lineHeight: 21, color: C.azul },
 
@@ -356,32 +338,4 @@ const styles = StyleSheet.create({
     borderColor: C.lavanda,
   },
   botaoExcluirTexto: { fontSize: 15, fontWeight: '600', color: C.azul },
-
-  modalFundo: {
-    flex: 1,
-    backgroundColor: 'rgba(32,42,67,0.5)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 24,
-  },
-  modalCartao: {
-    width: '100%',
-    maxWidth: 360,
-    backgroundColor: C.branco,
-    borderRadius: 20,
-    padding: 20,
-    gap: 8,
-  },
-  modalTitulo: { fontSize: 18, fontWeight: '800', color: C.azul },
-  modalTexto: { fontSize: 14, lineHeight: 20, color: C.texto },
-  modalBotoes: { flexDirection: 'row', gap: 10, marginTop: 12 },
-  modalBotao: {
-    flex: 1,
-    height: 48,
-    borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  modalCancelar: { backgroundColor: C.branco, borderWidth: 1, borderColor: C.lavanda },
-  modalExcluir: { backgroundColor: C.erro },
 });

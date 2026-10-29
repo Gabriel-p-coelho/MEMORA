@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -17,7 +17,7 @@ const C = {
   azul: '#202A43',
   azulCartao: '#303B5B',
   lavanda: '#DCE3F4',
-  texto: '#55607A', 
+  texto: '#55607A',
   borda: '#E2E6F0',
   menta: '#8FE0CB',
   pessego: '#F6C4A8',
@@ -33,7 +33,6 @@ const STATUS = [
   'Abandonado',
 ];
 
-// No banco a categoria é salva no singular; a biblioteca usa o plural.
 const TIPO_DA_CATEGORIA = {
   Filme: 'Filmes',
   Série: 'Séries',
@@ -71,7 +70,6 @@ function corDoStatus(status) {
   }
 }
 
-
 function FiltroChip({ titulo, selecionado, onPress, icone, compacto }) {
   return (
     <TouchableOpacity
@@ -83,8 +81,7 @@ function FiltroChip({ titulo, selecionado, onPress, icone, compacto }) {
       onPress={onPress}
       activeOpacity={0.75}
       accessibilityRole="button"
-      accessibilityState={{ selected: selecionado }}
-    >
+      accessibilityState={{ selected: selecionado }}>
       {icone ? (
         <Ionicons
           name={icone}
@@ -99,8 +96,7 @@ function FiltroChip({ titulo, selecionado, onPress, icone, compacto }) {
           styles.chipTexto,
           compacto && styles.chipTextoCompacto,
           selecionado && styles.chipTextoAtivo,
-        ]}
-      >
+        ]}>
         {titulo}
       </Text>
     </TouchableOpacity>
@@ -114,8 +110,7 @@ function ObraCard({ obra, onAbrir }) {
     <TouchableOpacity
       style={styles.obraCard}
       activeOpacity={0.8}
-      onPress={onAbrir}
-    >
+      onPress={onAbrir}>
       <View style={[styles.capaObra, { backgroundColor: obra.cor }]}>
         <Ionicons name={obra.icone} size={32} color={corIcone} />
       </View>
@@ -129,8 +124,7 @@ function ObraCard({ obra, onAbrir }) {
           style={[
             styles.statusPill,
             { backgroundColor: corDoStatus(obra.status) },
-          ]}
-        >
+          ]}>
           <Text style={styles.statusTexto}>{obra.status}</Text>
         </View>
 
@@ -148,7 +142,6 @@ export default function Biblioteca({ navigation }) {
   const [tipoSelecionado, setTipoSelecionado] = useState('Todos');
   const [statusSelecionado, setStatusSelecionado] = useState('Todos');
 
-  // Equivalente ao componentDidMount: fica escutando as obras do usuário.
   useEffect(() => {
     const uid = firebase.auth().currentUser.uid;
     const ref = firebase.database().ref('/usuarios/' + uid + '/obras');
@@ -161,8 +154,6 @@ export default function Biblioteca({ navigation }) {
         return;
       }
 
-      // Object.keys (em vez de Object.values) para guardar o id de cada obra,
-      // que vai ser usado para abrir os detalhes.
       const lista = Object.keys(data).map((id) => {
         const tipo = TIPO_DA_CATEGORIA[data[id].categoria];
         return {
@@ -177,25 +168,22 @@ export default function Biblioteca({ navigation }) {
 
       setObras(lista.reverse()); // mais recentes primeiro
     });
-
     return () => ref.off();
   }, []);
 
-  const obrasFiltradas = useMemo(() => {
-    return obras.filter((obra) => {
-      const correspondeBusca = obra.titulo
-        .toLowerCase()
-        .includes(busca.trim().toLowerCase());
+  const obrasFiltradas = obras.filter((obra) => {
+    const correspondeBusca = obra.titulo
+      .toLowerCase()
+      .includes(busca.trim().toLowerCase());
 
-      const correspondeTipo =
-        tipoSelecionado === 'Todos' || obra.tipo === tipoSelecionado;
+    const correspondeTipo =
+      tipoSelecionado === 'Todos' || obra.tipo === tipoSelecionado;
 
-      const correspondeStatus =
-        statusSelecionado === 'Todos' || obra.status === statusSelecionado;
+    const correspondeStatus =
+      statusSelecionado === 'Todos' || obra.status === statusSelecionado;
 
-      return correspondeBusca && correspondeTipo && correspondeStatus;
-    });
-  }, [obras, busca, tipoSelecionado, statusSelecionado]);
+    return correspondeBusca && correspondeTipo && correspondeStatus;
+  });
 
   const total = obrasFiltradas.length;
 
@@ -204,8 +192,7 @@ export default function Biblioteca({ navigation }) {
       <ScrollView
         contentContainerStyle={styles.conteudo}
         showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-      >
+        keyboardShouldPersistTaps="handled">
         <View style={styles.tituloLinha}>
           <Text style={styles.tituloPagina}>Minha biblioteca</Text>
           <Text style={styles.contagem}>
@@ -229,8 +216,7 @@ export default function Biblioteca({ navigation }) {
             <TouchableOpacity
               onPress={() => setBusca('')}
               accessibilityLabel="Limpar busca"
-              hitSlop={10}
-            >
+              hitSlop={10}>
               <Ionicons name="close-circle" size={20} color={C.texto} />
             </TouchableOpacity>
           )}
@@ -240,8 +226,7 @@ export default function Biblioteca({ navigation }) {
           horizontal
           showsHorizontalScrollIndicator={false}
           style={styles.filtrosScroll}
-          contentContainerStyle={styles.filtros}
-        >
+          contentContainerStyle={styles.filtros}>
           {TIPOS.map((tipo) => (
             <FiltroChip
               key={tipo}
@@ -257,8 +242,7 @@ export default function Biblioteca({ navigation }) {
           horizontal
           showsHorizontalScrollIndicator={false}
           style={styles.filtrosScroll}
-          contentContainerStyle={styles.filtros}
-        >
+          contentContainerStyle={styles.filtros}>
           {STATUS.map((status) => (
             <FiltroChip
               key={status}

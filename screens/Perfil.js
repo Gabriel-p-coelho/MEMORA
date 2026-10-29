@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CommonActions } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import firebase from '../config/config';
+import { vibrar } from '../components/Haptico';
 
 const C = {
   fundo: '#F4F5F9',
@@ -14,7 +15,6 @@ const C = {
   linha: '#E6E9F3',
 };
 
-// Categorias na ordem em que aparecem em "Sua jornada".
 const JORNADA = [
   { categoria: 'Livro', rotulo: 'livros' },
   { categoria: 'Filme', rotulo: 'filmes' },
@@ -23,7 +23,6 @@ const JORNADA = [
   { categoria: 'Álbum', rotulo: 'álbuns' },
 ];
 
-// "Diário cultural desde outubro de 2026" (mês em que a conta foi criada).
 function desdeQuando() {
   const user = firebase.auth().currentUser;
   const criada = user && user.metadata && user.metadata.creationTime;
@@ -45,7 +44,6 @@ export default function Perfil({ navigation }) {
   const [obras, setObras] = useState([]);
   const nome = nomeDoUsuario();
 
-  // Fica escutando as obras do usuário (igual à Biblioteca).
   useEffect(() => {
     const uid = firebase.auth().currentUser.uid;
     const ref = firebase.database().ref('/usuarios/' + uid + '/obras');
@@ -58,7 +56,7 @@ export default function Perfil({ navigation }) {
         return;
       }
 
-      setObras(Object.keys(data).map((id) => ({ ...data[id], id: id })));
+      setObras(Object.keys(data).map((id) => ({ ...data[id], id })));
     });
 
     return () => ref.off('value', escutar);
@@ -81,11 +79,19 @@ export default function Perfil({ navigation }) {
     { rotulo: 'Nota média', valor: media },
   ];
 
+  function confirmarSaida() {
+    Alert.alert('Sair da conta?', 'Você precisará entrar novamente para acessar seu diário.', [
+      { text: 'Cancelar', style: 'cancel' },
+      { text: 'Sair', style: 'destructive', onPress: sair },
+    ]);
+  }
+
   function sair() {
     firebase
       .auth()
       .signOut()
       .then(() => {
+        vibrar();
         navigation.dispatch(
           CommonActions.reset({ index: 0, routes: [{ name: 'Login' }] })
         );
@@ -143,7 +149,7 @@ export default function Perfil({ navigation }) {
 
         <Pressable
           style={({ pressed }) => [s.botaoSair, pressed && { opacity: 0.8 }]}
-          onPress={sair}
+          onPress={confirmarSaida}
           accessibilityRole="button"
         >
           <Ionicons name="log-out-outline" size={20} color={C.azul} />

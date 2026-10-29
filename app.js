@@ -8,7 +8,6 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
-import firebase from './config/config';
 
 import Login from './screens/Login';
 import Cadastro from './screens/Cadastro';

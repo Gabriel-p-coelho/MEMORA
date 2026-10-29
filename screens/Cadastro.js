@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { View, Text, TouchableOpacity, Alert, StyleSheet } from 'react-native';
 import firebase from '../config/config';
-import { C, TelaAuth, Titulo, Campo, BotaoPrincipal } from '../components/AuthUI';
+import { C, TelaAuth, Titulo, Campo, BotaoPrincipal } from '../components/Auth';
 
 export default function Cadastro({ navigation }) {
   const [usuario, setUsuario] = useState('');
