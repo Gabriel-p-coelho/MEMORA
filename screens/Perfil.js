@@ -128,7 +128,6 @@ export default function Perfil({ navigation }) {
           <Pressable
             style={s.linha}
             onPress={() => navigation.navigate('Diario')}
-            accessibilityRole="button"
           >
             <Text style={[s.linhaTitulo, { flex: 1 }]}>Meu Diário</Text>
             <Ionicons name="chevron-forward" size={22} color={C.azul} />
@@ -150,7 +149,6 @@ export default function Perfil({ navigation }) {
         <Pressable
           style={({ pressed }) => [s.botaoSair, pressed && { opacity: 0.8 }]}
           onPress={confirmarSaida}
-          accessibilityRole="button"
         >
           <Ionicons name="log-out-outline" size={20} color={C.azul} />
           <Text style={s.botaoSairTexto}>Sair da conta</Text>

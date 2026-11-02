@@ -86,7 +86,6 @@ function BibliotecaVazia({ onAdicionar }) {
         style={styles.botaoAdicionar}
         onPress={onAdicionar}
         activeOpacity={0.8}
-        accessibilityRole="button"
       >
         <Ionicons name="add" size={18} color={C.branco} />
         <Text style={styles.botaoAdicionarTexto}>

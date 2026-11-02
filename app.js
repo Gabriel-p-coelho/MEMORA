@@ -16,6 +16,7 @@ import Biblioteca from './screens/Biblioteca';
 import AdicionarConteudo from './screens/AdicionarConteudo';
 import Perfil from './screens/Perfil';
 import DetalhesObra from './screens/DetalhesObra';
+import Estatisticas from './screens/Estatisticas';
 import { DiarioScreen, EstatisticasScreen } from './screens/Placeholders.js';
 
 const Stack = createNativeStackNavigator();
@@ -107,7 +108,7 @@ function Abas() {
           },
         })}
       />
-      <Tab.Screen name="Estatísticas" component={EstatisticasScreen} />
+      <Tab.Screen name="Estatísticas" component={Estatisticas} />
       <Tab.Screen name="Perfil" component={Perfil} />
     </Tab.Navigator>
   );
