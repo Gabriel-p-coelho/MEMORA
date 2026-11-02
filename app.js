@@ -17,7 +17,7 @@ import AdicionarConteudo from './screens/AdicionarConteudo';
 import Perfil from './screens/Perfil';
 import DetalhesObra from './screens/DetalhesObra';
 import Estatisticas from './screens/Estatisticas';
-import { DiarioScreen, EstatisticasScreen } from './screens/Placeholders.js';
+import { DiarioScreen} from './screens/Placeholders.js';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
