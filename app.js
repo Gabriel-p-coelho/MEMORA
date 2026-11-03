@@ -17,7 +17,7 @@ import AdicionarConteudo from './screens/AdicionarConteudo';
 import Perfil from './screens/Perfil';
 import DetalhesObra from './screens/DetalhesObra';
 import Estatisticas from './screens/Estatisticas';
-import { DiarioScreen} from './screens/Placeholders.js';
+import Diario from './screens/Diario';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -130,7 +130,7 @@ export default function App() {
             component={AdicionarConteudo}
           />
           <Stack.Screen name="DetalhesObra" component={DetalhesObra} />
-          <Stack.Screen name="Diario" component={DiarioScreen} />
+          <Stack.Screen name="Diario" component={Diario} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
