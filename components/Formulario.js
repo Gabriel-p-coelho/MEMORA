@@ -9,19 +9,7 @@ import {
   View,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-
-export const C = {
-  fundo: '#F4F5F9',
-  branco: '#FFFFFF',
-  menta: '#8FE0CB',
-  azul: '#202A43',
-  lavanda: '#DCE3F4',
-  texto: '#55607A',
-  placeholder: '#9AA2B8',
-  borda: '#E2E6F0',
-  tracejado: '#8D96B2',
-  erro: '#C0392B',
-};
+import { C } from './Cores';
 
 export const STATUS = ['Planejado', 'Em andamento', 'Concluído', 'Abandonado'];
 
@@ -49,7 +37,6 @@ export const CATEGORIAS = {
           chave: 'nota',
           rotulo: 'Nota (0 a 5)',
           dica: 'Ex.: 4,5',
-          teclado: 'decimal-pad',
         },
       ],
     ],
@@ -68,7 +55,6 @@ export const CATEGORIAS = {
           chave: 'nota',
           rotulo: 'Nota (0 a 5)',
           dica: 'Ex.: 4,5',
-          teclado: 'decimal-pad',
         },
       ],
     ],
@@ -88,21 +74,18 @@ export const CATEGORIAS = {
       [
         {
           chave: 'paginasLidas',
-          rotulo: 'Páginas lidas',
+          rotulo: 'Págs. lidas',
           teclado: 'number-pad',
         },
         {
           chave: 'totalPaginas',
-          rotulo: 'Total de páginas',
+          rotulo: 'Total de págs.',
           teclado: 'number-pad',
         },
-      ],
-      [
         {
           chave: 'nota',
           rotulo: 'Nota (0 a 5)',
           dica: 'Ex.: 4,5',
-          metade: true,
         },
       ],
     ],
@@ -122,13 +105,12 @@ export const CATEGORIAS = {
           chave: 'nota',
           rotulo: 'Nota (0 a 5)',
           dica: 'Ex.: 4,5',
-          teclado: 'decimal-pad',
         },
       ],
     ],
   },
   Álbum: {
-    icone: 'disc-outline',
+    icone: 'musical-notes-outline',
     imagem: 'Capa',
     semImagem: 'Sem capa',
     titulo: 'Título do álbum',
@@ -145,7 +127,6 @@ export const CATEGORIAS = {
           chave: 'nota',
           rotulo: 'Nota (0 a 5)',
           dica: 'Ex.: 4,5',
-          teclado: 'decimal-pad',
         },
       ],
     ],
@@ -155,7 +136,7 @@ export const CATEGORIAS = {
 const ORDEM = ['Filme', 'Série', 'Livro', 'Jogo', 'Álbum'];
 
 function Rotulo({ children }) {
-  return <Text style={styles.rotulo}>{children}</Text>;
+  return <Text style={s.rotulo}>{children}</Text>;
 }
 
 const CAMPOS_DATA = ['dataConclusao', 'ouvidoEm'];
@@ -236,23 +217,21 @@ function Calendario({ valor, onSelecionar, onFechar }) {
 
   return (
     <Modal visible transparent animationType="fade" onRequestClose={onFechar}>
-      <Pressable style={styles.calFundo} onPress={onFechar}>
-        <Pressable style={styles.calCartao} onPress={() => {}}>
-          <View style={styles.calCabecalho}>
+      <Pressable style={s.calFundo} onPress={onFechar}>
+        <Pressable style={s.calCartao} onPress={() => {}}>
+          <View style={s.calCabecalho}>
             <TouchableOpacity
               onPress={() => mudarMes(-1)}
-              hitSlop={10}
-              accessibilityLabel="Mês anterior">
+              hitSlop={10}>
               <Ionicons name="chevron-back" size={22} color={C.azul} />
             </TouchableOpacity>
-            <Text style={styles.calMes}>
+            <Text style={s.calMes}>
               {MESES[mes]} {ano}
             </Text>
             <TouchableOpacity
               onPress={() => mudarMes(1)}
               disabled={ehMesAtual}
-              hitSlop={10}
-              accessibilityLabel="Próximo mês">
+              hitSlop={10}>
               <Ionicons
                 name="chevron-forward"
                 size={22}
@@ -263,16 +242,16 @@ function Calendario({ valor, onSelecionar, onFechar }) {
 
           <View style={styles.calSemana}>
             {DIAS_SEMANA.map((d, i) => (
-              <Text key={i} style={styles.calDiaSemana}>
+              <Text key={i} style={s.calDiaSemana}>
                 {d}
               </Text>
             ))}
           </View>
 
           {semanas.map((semana, i) => (
-            <View key={i} style={styles.calSemana}>
+            <View key={i} style={s.calSemana}>
               {semana.map((dia, j) => {
-                if (!dia) return <View key={j} style={styles.calCelula} />;
+                if (!dia) return <View key={j} style={s.calCelula} />;
                 const data = new Date(ano, mes, dia);
                 const futuro = data > hoje;
                 const ativo =
@@ -280,16 +259,16 @@ function Calendario({ valor, onSelecionar, onFechar }) {
                 return (
                   <TouchableOpacity
                     key={j}
-                    style={styles.calCelula}
+                    style={s.calCelula}
                     disabled={futuro}
                     onPress={() => onSelecionar(formatarData(data))}
                     activeOpacity={0.7}>
-                    <View style={[styles.calDia, ativo && styles.calDiaAtivo]}>
+                    <View style={[s.calDia, ativo && s.calDiaAtivo]}>
                       <Text
                         style={[
-                          styles.calDiaTexto,
-                          futuro && styles.calDiaTextoDesativado,
-                          ativo && styles.calDiaTextoAtivo,
+                          s.calDiaTexto,
+                          futuro && s.calDiaTextoDesativado,
+                          ativo && s.calDiaTextoAtivo,
                         ]}>
                         {dia}
                       </Text>
@@ -300,12 +279,12 @@ function Calendario({ valor, onSelecionar, onFechar }) {
             </View>
           ))}
 
-          <View style={styles.calRodape}>
+          <View style={s.calRodape}>
             <TouchableOpacity onPress={() => onSelecionar('')} hitSlop={10}>
-              <Text style={styles.calAcao}>Limpar</Text>
+              <Text style={s.calAcao}>Limpar</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={onFechar} hitSlop={10}>
-              <Text style={styles.calAcao}>Fechar</Text>
+              <Text style={s.calAcao}>Fechar</Text>
             </TouchableOpacity>
           </View>
         </Pressable>
@@ -318,16 +297,16 @@ function CampoData({ campo, valor, onChange }) {
   const [aberto, setAberto] = useState(false);
 
   return (
-    <View style={styles.campo}>
+    <View style={s.campo}>
       <Rotulo>{campo.rotulo}</Rotulo>
       <TouchableOpacity
-        style={[styles.input, styles.inputData]}
+        style={[s.input, s.inputData]}
         onPress={() => setAberto(true)}
         activeOpacity={0.8}
         accessibilityRole="button"
         accessibilityLabel={`${campo.rotulo}: abrir calendário`}>
         <Text
-          style={valor ? styles.inputDataTexto : styles.inputDataDica}
+          style={valor ? s.inputDataTexto : s.inputDataDica}
           numberOfLines={1}>
           {valor || campo.dica}
         </Text>
@@ -362,10 +341,10 @@ function CampoNota({ campo, valor, onChange }) {
   };
 
   return (
-    <View style={styles.campo}>
+    <View style={s.campo}>
       <Rotulo>{campo.rotulo}</Rotulo>
       <TextInput
-        style={[styles.input, erro && styles.inputErro]}
+        style={[s.input, erro && s.inputErro]}
         value={valor}
         onChangeText={aoDigitar}
         onBlur={() => setErro(false)}
@@ -374,17 +353,17 @@ function CampoNota({ campo, valor, onChange }) {
         keyboardType="decimal-pad"
         maxLength={3}
       />
-      {erro ? <Text style={styles.erro}>Use um valor de 0 a 5</Text> : null}
+      {erro ? <Text style={s.erro}>Use um valor de 0 a 5</Text> : null}
     </View>
   );
 }
 
 export function CampoTexto({ rotulo, valor, onChange, dica, teclado }) {
   return (
-    <View style={styles.campo}>
+    <View style={s.campo}>
       <Rotulo>{rotulo}</Rotulo>
       <TextInput
-        style={styles.input}
+        style={s.input}
         value={valor}
         onChangeText={onChange}
         placeholder={dica}
@@ -416,7 +395,7 @@ function Campo({ campo, valor, onChange }) {
 
 export function LinhaDeCampos({ campos, valores, onChange }) {
   return (
-    <View style={styles.linha}>
+    <View style={s.linha}>
       {campos.map((campo) => (
         <Campo
           key={campo.chave}
@@ -425,26 +404,21 @@ export function LinhaDeCampos({ campos, valores, onChange }) {
           onChange={(texto) => onChange(campo.chave, texto)}
         />
       ))}
-      {campos.length === 1 && campos[0].metade ? (
-        <View style={styles.campo} />
-      ) : null}
     </View>
   );
 }
 
 export function SeletorCategoria({ selecionada, onSelecionar }) {
   return (
-    <View style={styles.categorias}>
+    <View style={s.categorias}>
       {ORDEM.map((nome) => {
         const ativa = selecionada === nome;
         return (
           <TouchableOpacity
             key={nome}
-            style={[styles.categoria, ativa && styles.categoriaAtiva]}
+            style={[s.categoria, ativa && s.categoriaAtiva]}
             onPress={() => onSelecionar(nome)}
-            activeOpacity={0.8}
-            accessibilityRole="button"
-            accessibilityState={{ selected: ativa }}>
+            activeOpacity={0.8}>
             <Ionicons
               name={CATEGORIAS[nome].icone}
               size={20}
@@ -452,8 +426,8 @@ export function SeletorCategoria({ selecionada, onSelecionar }) {
             />
             <Text
               style={[
-                styles.categoriaTexto,
-                ativa && styles.categoriaTextoAtivo,
+                s.categoriaTexto,
+                ativa && s.categoriaTextoAtivo,
               ]}>
               {nome}
             </Text>
@@ -469,20 +443,20 @@ export function SecaoImagem({ categoria }) {
   return (
     <View>
       <Rotulo>{imagem} (opcional)</Rotulo>
-      <View style={styles.imagemLinha}>
-        <View style={styles.imagemVazia}>
+      <View style={s.imagemLinha}>
+        <View style={s.imagemVazia}>
           <Ionicons name="image-outline" size={24} color={C.azul} />
-          <Text style={styles.imagemVaziaTexto}>{semImagem}</Text>
+          <Text style={s.imagemVaziaTexto}>{semImagem}</Text>
         </View>
 
-        <View style={styles.imagemBotoes}>
-          <TouchableOpacity style={styles.botaoImagem} activeOpacity={0.8}>
+        <View style={s.imagemBotoes}>
+          <TouchableOpacity style={s.botaoImagem} activeOpacity={0.8}>
             <Ionicons name="image" size={16} color={C.azul} />
-            <Text style={styles.botaoImagemTexto}>Escolher da galeria</Text>
+            <Text style={s.botaoImagemTexto}>Escolher da galeria</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.botaoImagem} activeOpacity={0.8}>
+          <TouchableOpacity style={s.botaoImagem} activeOpacity={0.8}>
             <Ionicons name="camera" size={16} color={C.azul} />
-            <Text style={styles.botaoImagemTexto}>Tirar foto</Text>
+            <Text style={s.botaoImagemTexto}>Tirar foto</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -494,28 +468,26 @@ export function SeletorStatus({ selecionado, onSelecionar, lista = STATUS }) {
   return (
     <View>
       <Rotulo>Status</Rotulo>
-      <View style={styles.statusLista}>
+      <View style={s.statusLista}>
         {lista.map((status) => {
           const ativo = selecionado === status;
           return (
             <TouchableOpacity
               key={status}
-              style={[styles.statusChip, ativo && styles.statusChipAtivo]}
+              style={[s.statusChip, ativo && s.statusChipAtivo]}
               onPress={() => onSelecionar(status)}
-              activeOpacity={0.8}
-              accessibilityRole="button"
-              accessibilityState={{ selected: ativo }}>
+              activeOpacity={0.8}>
               {ativo ? (
                 <Ionicons
                   name="checkmark"
                   size={15}
                   color={C.azul}
-                  style={styles.statusCheck}
+                  style={s.statusCheck}
                 />
               ) : null}
               <Text
-                style={[styles.statusTexto, ativo && styles.statusTextoAtivo]}>
-                {status}
+                style={[s.statusTexto, ativo && s.statusTextoAtivo]}>
+                {status}es
               </Text>
             </TouchableOpacity>
           );
@@ -525,7 +497,7 @@ export function SeletorStatus({ selecionado, onSelecionar, lista = STATUS }) {
   );
 }
 
-const styles = StyleSheet.create({
+const s = StyleSheet.create({
   rotulo: { fontSize: 13, fontWeight: '600', color: C.texto, marginBottom: 6 },
 
   categorias: { flexDirection: 'row', gap: 8 },
@@ -596,7 +568,7 @@ const styles = StyleSheet.create({
 
   calFundo: {
     flex: 1,
-    backgroundColor: 'rgba(32, 42, 67, 0.45)',
+    backgroundColor: C.overlayCalendario,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 24,

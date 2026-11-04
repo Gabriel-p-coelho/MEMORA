@@ -15,7 +15,6 @@ import { Ionicons } from '@expo/vector-icons';
 import firebase from '../config/config';
 import { vibrar } from '../components/Haptico';
 import {
-  C,
   STATUS,
   CATEGORIAS,
   CampoTexto,
@@ -24,6 +23,7 @@ import {
   SecaoImagem,
   SeletorStatus,
 } from '../components/Formulario';
+import { C } from '../components/Cores';
 
 export default function AdicionarConteudo({ navigation, route }) {
   const editando = route.params?.id;
@@ -92,25 +92,25 @@ export default function AdicionarConteudo({ navigation, route }) {
   }
 
   return (
-    <SafeAreaView style={styles.tela}>
+    <SafeAreaView style={s.tela}>
       <KeyboardAvoidingView
-        style={styles.tela}
+        style={s.tela}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <View style={styles.cabecalho}>
+        <View style={s.cabecalho}>
           <Pressable
             onPress={fechar}
             hitSlop={10}
-            style={styles.voltar}>
+            style={s.voltar}>
             <Ionicons name="chevron-back" size={26} color={C.azul} />
           </Pressable>
-          <Text style={styles.titulo}>
+          <Text style={s.titulo}>
             {editando ? 'Editar conteúdo' : 'Adicionar conteúdo'}
           </Text>
         </View>
 
         <ScrollView
-          style={styles.scroll}
-          contentContainerStyle={styles.conteudo}
+          style={s.scroll}
+          contentContainerStyle={s.conteudo}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled">
           <SeletorCategoria
@@ -158,18 +158,18 @@ export default function AdicionarConteudo({ navigation, route }) {
           />
         </ScrollView>
 
-        <View style={styles.rodape}>
+        <View style={s.rodape}>
           <TouchableOpacity
-            style={[styles.botaoRodape, styles.botaoCancelar]}
+            style={[s.botaoRodape, s.botaoCancelar]}
             onPress={fechar}
             activeOpacity={0.8}>
-            <Text style={styles.botaoCancelarTexto}>Cancelar</Text>
+            <Text style={s.botaoCancelarTexto}>Cancelar</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.botaoRodape, styles.botaoSalvar]}
+            style={[s.botaoRodape, s.botaoSalvar]}
             onPress={salvar}
             activeOpacity={0.8}>
-            <Text style={styles.botaoSalvarTexto}>{editando ? 'Salvar alterações' : 'Salvar na biblioteca'}</Text>
+            <Text style={s.botaoSalvarTexto}>{editando ? 'Salvar alterações' : 'Salvar na biblioteca'}</Text>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -178,7 +178,7 @@ export default function AdicionarConteudo({ navigation, route }) {
 }
 
 //Estilos
-const styles = StyleSheet.create({
+const s = StyleSheet.create({
   tela: { flex: 1, backgroundColor: C.fundo },
   scroll: { flex: 1 },
   conteudo: {

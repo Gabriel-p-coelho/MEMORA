@@ -12,8 +12,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import firebase from '../config/config';
-import { C, CATEGORIAS } from '../components/Formulario';
+import { CATEGORIAS } from '../components/Formulario';
 import { vibrar } from '../components/Haptico';
+import { C } from '../components/Cores';
 
 const ICONES_STATUS = {
   Planejado: 'time-outline',
@@ -39,7 +40,7 @@ function dataPorExtenso(texto) {
 
 function Estrelas({ nota }) {
   return (
-    <View style={styles.estrelas}>
+    <View style={s.estrelas}>
       {[1, 2, 3, 4, 5].map((i) => (
         <Ionicons
           key={i}
@@ -54,14 +55,14 @@ function Estrelas({ nota }) {
 
 function CartaoInfo({ titulo, direita, porcentagem }) {
   return (
-    <View style={styles.cartaoLargo}>
-      <View style={styles.linhaProgresso}>
-        <Text style={styles.cartaoTitulo}>{titulo}</Text>
-        <Text style={styles.pequeno}>{direita}</Text>
+    <View style={s.cartaoLargo}>
+      <View style={s.linhaProgresso}>
+        <Text style={s.cartaoTitulo}>{titulo}</Text>
+        <Text style={s.pequeno}>{direita}</Text>
       </View>
       {porcentagem !== undefined && (
-        <View style={styles.barraFundo}>
-          <View style={[styles.barraPreenchida, { width: `${porcentagem}%` }]} />
+        <View style={s.barraFundo}>
+          <View style={[s.barraPreenchida, { width: `${porcentagem}%` }]} />
         </View>
       )}
     </View>
@@ -78,8 +79,8 @@ export default function DetalhesObra({ navigation, route }) {
 
   useEffect(() => {
     const ref = firebase.database().ref(caminho);
-    ref.on('value', (snapshot) => setObra(snapshot.val()));
-    return () => ref.off();
+    const escutar = ref.on('value', (snapshot) => setObra(snapshot.val()));
+    return () => ref.off('value', escutar);
   }, [caminho]);
 
   function excluir() {
@@ -105,7 +106,7 @@ export default function DetalhesObra({ navigation, route }) {
     );
   }
 
-  if (!obra) return <View style={styles.tela} />;
+  if (!obra) return <View style={s.tela} />;
 
   const config = CATEGORIAS[obra.categoria];
   const dataConclusao = dataPorExtenso(obra.dataConclusao || obra.ouvidoEm);
@@ -139,47 +140,47 @@ export default function DetalhesObra({ navigation, route }) {
   }
 
   return (
-    <View style={styles.tela}>
+    <View style={s.tela}>
       <StatusBar style="light" />
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
-        <View style={[styles.topo, { height: 250 + insets.top }]}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.scroll}>
+        <View style={[s.topo, { height: 250 + insets.top }]}>
           <Pressable
             onPress={() => navigation.goBack()}
             accessibilityLabel="Voltar"
-            style={[styles.voltar, { top: insets.top + 16 }]}>
+            style={[s.voltar, { top: insets.top + 16 }]}>
             <Ionicons name="chevron-back" size={22} color={C.azul} />
           </Pressable>
         </View>
 
-        <View style={styles.capa}>
-          <View style={styles.capaInterna}>
+        <View style={s.capa}>
+          <View style={s.capaInterna}>
             <Ionicons name={config ? config.icone : 'albums-outline'} size={36} color={C.azul} />
           </View>
         </View>
 
-        <View style={styles.conteudo}>
-          <View style={styles.cabecalhoTexto}>
-            <Text style={styles.titulo}>{obra.titulo}</Text>
-            <Text style={styles.subtitulo}>{subtitulo}</Text>
+        <View style={s.conteudo}>
+          <View style={s.cabecalhoTexto}>
+            <Text style={s.titulo}>{obra.titulo}</Text>
+            <Text style={s.subtitulo}>{subtitulo}</Text>
           </View>
 
-          <View style={styles.linhaCartoes}>
-            <View style={styles.cartao}>
-              <Text style={styles.pequeno}>Status</Text>
-              <View style={styles.statusLinha}>
+          <View style={s.linhaCartoes}>
+            <View style={s.cartao}>
+              <Text style={s.pequeno}>Status</Text>
+              <View style={s.statusLinha}>
                 <Ionicons name={ICONES_STATUS[obra.status] || 'ellipse-outline'} size={16} color={C.azul} />
-                <Text style={styles.statusTexto}>{obra.status}</Text>
+                <Text style={s.statusTexto}>{obra.status}</Text>
               </View>
-              {dataConclusao ? <Text style={styles.pequeno}>em {dataConclusao}</Text> : null}
+              {dataConclusao ? <Text style={s.pequeno}>em {dataConclusao}</Text> : null}
             </View>
 
-            <View style={styles.cartao}>
-              <Text style={styles.pequeno}>Sua nota</Text>
-              <View style={styles.notaLinha}>
-                <Text style={styles.notaNumero}>
+            <View style={s.cartao}>
+              <Text style={s.pequeno}>Sua nota</Text>
+              <View style={s.notaLinha}>
+                <Text style={s.notaNumero}>
                   {temNota ? String(obra.nota).replace('.', ',') : '–'}
                 </Text>
-                <Text style={styles.notaDe}> / 5</Text>
+                <Text style={s.notaDe}> / 5</Text>
               </View>
               <Estrelas nota={temNota ? nota : 0} />
             </View>
@@ -188,31 +189,31 @@ export default function DetalhesObra({ navigation, route }) {
           {extra}
 
           {obra.opiniao ? (
-            <View style={[styles.cartaoLargo, { gap: 6 }]}>
-              <Text style={styles.cartaoTitulo}>Opinião</Text>
-              <Text style={styles.opiniao}>{obra.opiniao}</Text>
+            <View style={[s.cartaoLargo, { gap: 6 }]}>
+              <Text style={s.cartaoTitulo}>Opinião</Text>
+              <Text style={s.opiniao}>{obra.opiniao}</Text>
             </View>
           ) : null}
         </View>
       </ScrollView>
 
-      <View style={[styles.rodape, { paddingBottom: Math.max(insets.bottom, 12) + 12 }]}>
+      <View style={[s.rodape, { paddingBottom: Math.max(insets.bottom, 12) + 12 }]}>
         <TouchableOpacity
-          style={[styles.botao, styles.botaoEditar]}
+          style={[s.botao, s.botaoEditar]}
           activeOpacity={0.8}
           accessibilityRole="button"
           onPress={() => navigation.navigate('AdicionarConteudo', { id })}>
           <Ionicons name="pencil-outline" size={18} color={C.branco} />
-          <Text style={styles.botaoEditarTexto}>Editar</Text>
+          <Text style={s.botaoEditarTexto}>Editar</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.botao, styles.botaoExcluir]}
+          style={[s.botao, s.botaoExcluir]}
           activeOpacity={0.8}
           accessibilityRole="button"
           onPress={confirmarExclusao}>
           <Ionicons name="trash-outline" size={18} color={C.azul} />
-          <Text style={styles.botaoExcluirTexto}>Excluir</Text>
+          <Text style={s.botaoExcluirTexto}>Excluir</Text>
         </TouchableOpacity>
       </View>
 
@@ -220,7 +221,7 @@ export default function DetalhesObra({ navigation, route }) {
   );
 }
 
-const styles = StyleSheet.create({
+const s = StyleSheet.create({
   tela: { flex: 1, backgroundColor: C.fundo },
   scroll: { paddingBottom: 24 },
 
@@ -235,7 +236,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: 'rgba(255,255,255,0.7)',
+    backgroundColor: C.brancoVidro,
     alignItems: 'center',
     justifyContent: 'center',
   },

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   View,
   Text,
@@ -13,29 +12,20 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-export const C = {
-  azul: '#202A43',
-  ardosia: '#303B5B',
-  fundo: '#F4F5F9',
-  lavanda: '#DCE3F4',
-  cinza: '#6B7798',
-  branco: '#FFFFFF',
-  borda: '#E9EBF2',
-};
+import { C } from './Cores';
 
 export function Logo() {
   return (
-    <View style={styles.logoWrap}>
-      <View style={styles.logoIcone}>
+    <View style={s.logoWrap}>
+      <View style={s.logoIcone}>
         <Image
           source={require('../assets/Logo.png')}
-          style={styles.logoImagem}
+          style={s.logoImagem}
           resizeMode="contain"
         />
       </View>
-      <Text style={styles.logoTexto}>memora</Text>
-      <Text style={styles.slogan}>Sua história, em cada descoberta.</Text>
+      <Text style={s.logoTexto}>memora</Text>
+      <Text style={s.slogan}>Sua história, em cada descoberta.</Text>
     </View>
   );
 }
@@ -43,40 +33,26 @@ export function Logo() {
 export function Titulo({ titulo, subtitulo }) {
   return (
     <View style={{ marginBottom: 24 }}>
-      <Text style={styles.titulo}>{titulo}</Text>
-      <Text style={styles.subtitulo}>{subtitulo}</Text>
+      <Text style={s.titulo}>{titulo}</Text>
+      <Text style={s.subtitulo}>{subtitulo}</Text>
     </View>
   );
 }
 
 export function Campo({ label, icone, secure, ...props }) {
-  const [oculto, setOculto] = useState(!!secure);
-
   return (
-    <View style={styles.campoWrap}>
-      <Text style={styles.label}>{label}</Text>
-      <View style={styles.campo}>
-        <Ionicons name={icone} size={20} color={C.cinza} />
+    <View style={s.campoWrap}>
+      <Text style={s.label}>{label}</Text>
+      <View style={s.campo}>
+        <Ionicons name={icone} size={20} color={C.textoSuave} />
         <TextInput
-          style={styles.input}
-          placeholderTextColor="#8A94AE"
-          secureTextEntry={oculto}
+          style={s.input}
+          placeholderTextColor={C.cinza}
+          secureTextEntry={secure}
           autoCapitalize="none"
           autoCorrect={false}
           {...props}
         />
-        {secure && (
-          <TouchableOpacity
-            onPress={() => setOculto(!oculto)}
-            accessibilityLabel={oculto ? 'Mostrar senha' : 'Ocultar senha'}
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-            <Ionicons
-              name={oculto ? 'eye-outline' : 'eye-off-outline'}
-              size={20}
-              color={C.cinza}
-            />
-          </TouchableOpacity>
-        )}
       </View>
     </View>
   );
@@ -85,14 +61,14 @@ export function Campo({ label, icone, secure, ...props }) {
 export function BotaoPrincipal({ titulo, onPress, carregando }) {
   return (
     <TouchableOpacity
-      style={[styles.botao, carregando && { opacity: 0.7 }]}
+      style={[s.botao, carregando && { opacity: 0.7 }]}
       onPress={onPress}
       disabled={carregando}
       activeOpacity={0.85}>
       {carregando ? (
         <ActivityIndicator color={C.branco} />
       ) : (
-        <Text style={styles.botaoTexto}>{titulo}</Text>
+        <Text style={s.botaoTexto}>{titulo}</Text>
       )}
     </TouchableOpacity>
   );
@@ -100,19 +76,19 @@ export function BotaoPrincipal({ titulo, onPress, carregando }) {
 
 export function TelaAuth({ children }) {
   return (
-    <View style={styles.tela}>
-      <View pointerEvents="none" style={[styles.blob, styles.blobTopo]} />
-      <View pointerEvents="none" style={[styles.blob, styles.blobBase]} />
+    <View style={s.tela}>
+      <View pointerEvents="none" style={[s.blob, s.blobTopo]} />
+      <View pointerEvents="none" style={[s.blob, s.blobBase]} />
       <SafeAreaView style={{ flex: 1 }}>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           <ScrollView
-            contentContainerStyle={styles.scroll}
+            contentContainerStyle={s.scroll}
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}>
             <Logo />
-            <View style={styles.conteudo}>{children}</View>
+            <View style={s.conteudo}>{children}</View>
           </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>
@@ -120,7 +96,7 @@ export function TelaAuth({ children }) {
   );
 }
 
-const styles = StyleSheet.create({
+const s = StyleSheet.create({
   tela: { flex: 1, backgroundColor: C.fundo },
   scroll: { flexGrow: 1, paddingHorizontal: 28, paddingBottom: 32 },
   conteudo: { marginTop: 36 },
@@ -153,9 +129,9 @@ const styles = StyleSheet.create({
     letterSpacing: -1.5,
     color: C.azul,
   },
-  slogan: { fontSize: 13, color: C.cinza },
+  slogan: { fontSize: 13, color: C.textoSuave },
   titulo: { fontSize: 28, fontWeight: '800', color: C.azul, lineHeight: 34 },
-  subtitulo: { fontSize: 14, color: C.cinza, marginTop: 6 },
+  subtitulo: { fontSize: 14, color: C.textoSuave, marginTop: 6 },
   campoWrap: { marginBottom: 16 },
   label: { fontSize: 13, fontWeight: '600', color: C.azul, marginBottom: 6 },
   campo: {
@@ -164,7 +140,7 @@ const styles = StyleSheet.create({
     backgroundColor: C.branco,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: C.borda,
+    borderColor: C.bordaClara,
     paddingHorizontal: 14,
     height: 54,
   },

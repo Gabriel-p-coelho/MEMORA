@@ -3,26 +3,10 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import firebase from '../config/config';
-
-const C = {
-  fundo: '#F4F5F9',
-  branco: '#FFFFFF',
-  azul: '#202A43',
-  lavanda: '#DCE3F4',
-  texto: '#55607A',
-  menta: '#8FE0CB',
-};
+import { dataDaObra } from '../components/Obras';
+import { C } from '../components/Cores';
 
 const MESES = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
-
-function dataDaObra(obra) {
-  const partes = (obra.dataConclusao || obra.ouvidoEm || '').split('/');
-  if (partes.length === 3) {
-    const d = new Date(Number(partes[2]), Number(partes[1]) - 1, Number(partes[0]));
-    if (!isNaN(d.getTime())) return d.getTime();
-  }
-  return obra.atualizadaEm || obra.criadaEm || 0;
-}
 
 function rotuloDoDia(tempo) {
   const dia = new Date(tempo);
@@ -59,25 +43,25 @@ function Registro({ obra }) {
   const concluida = obra.status === 'Concluído';
 
   return (
-    <View style={styles.cartao}>
-      <View style={styles.cartaoTopo}>
-        <Text style={styles.cartaoTitulo}>
+    <View style={s.cartao}>
+      <View style={s.cartaoTopo}>
+        <Text style={s.cartaoTitulo}>
           {concluida ? 'Concluiu ' + obra.titulo : obra.titulo}
         </Text>
         {concluida ? (
-          <View style={styles.selo}>
-            <Text style={styles.seloTexto}>Concluído</Text>
+          <View style={s.selo}>
+            <Text style={s.seloTexto}>Concluído</Text>
           </View>
         ) : (
-          <Text style={styles.cartaoStatus}>{obra.status}</Text>
+          <Text style={s.cartaoStatus}>{obra.status}</Text>
         )}
       </View>
 
-      <Text style={styles.cartaoDetalhe}>{detalhe(obra)}</Text>
+      <Text style={s.cartaoDetalhe}>{detalhe(obra)}</Text>
 
       {obra.opiniao ? (
-        <View style={styles.opiniaoBox}>
-          <Text style={styles.opiniao}>“{obra.opiniao}”</Text>
+        <View style={s.opiniaoBox}>
+          <Text style={s.opiniao}>“{obra.opiniao}”</Text>
         </View>
       ) : null}
     </View>
@@ -118,28 +102,28 @@ export default function Diario({ navigation }) {
   });
 
   return (
-    <SafeAreaView style={styles.tela}>
-      <ScrollView contentContainerStyle={styles.conteudo} showsVerticalScrollIndicator={false}>
-        <View style={styles.cabecalho}>
-          <Pressable onPress={() => navigation.goBack()} accessibilityLabel="Voltar" style={styles.voltar}>
+    <SafeAreaView style={s.tela}>
+      <ScrollView contentContainerStyle={s.conteudo} showsVerticalScrollIndicator={false}>
+        <View style={s.cabecalho}>
+          <Pressable onPress={() => navigation.goBack()} accessibilityLabel="Voltar" style={s.voltar}>
             <Ionicons name="arrow-back" size={24} color={C.azul} />
           </Pressable>
-          <Text style={styles.titulo}>Meu Diário</Text>
+          <Text style={s.titulo}>Meu Diário</Text>
         </View>
-        <Text style={styles.subtitulo}>Sua linha do tempo cultural</Text>
+        <Text style={s.subtitulo}>Sua linha do tempo cultural</Text>
 
         {dias.length === 0 ? (
-          <Text style={styles.vazio}>
+          <Text style={s.vazio}>
             Nenhum registro ainda. Adicione obras para ver sua linha do tempo.
           </Text>
         ) : (
-          <View style={styles.linhaDoTempo}>
-            <View style={styles.linha} />
+          <View style={s.linhaDoTempo}>
+            <View style={s.linha} />
 
             {dias.map((dia, i) => (
-              <View key={dia.rotulo} style={styles.dia}>
-                <View style={[styles.ponto, i === 0 && styles.pontoAtual]} />
-                <Text style={styles.diaRotulo}>{dia.rotulo}</Text>
+              <View key={dia.rotulo} style={s.dia}>
+                <View style={[s.ponto, i === 0 && s.pontoAtual]} />
+                <Text style={s.diaRotulo}>{dia.rotulo}</Text>
                 {dia.obras.map((obra) => (
                   <Registro key={obra.id} obra={obra} />
                 ))}
@@ -152,7 +136,7 @@ export default function Diario({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const s = StyleSheet.create({
   tela: { flex: 1, backgroundColor: C.fundo },
   conteudo: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 32 },
 

@@ -2,18 +2,8 @@ import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import firebase from '../config/config';
-
-const C = {
-  fundo: '#F4F5F9',
-  branco: '#FFFFFF',
-  azul: '#202A43',
-  azulCartao: '#303B5B',
-  lavanda: '#DCE3F4',
-  texto: '#55607A',
-  menta: '#8FE0CB',
-  pessego: '#F6C4A8',
-  cinza: '#8A94AD',
-};
+import { dataDaObra, mediaDasNotas } from '../components/Obras';
+import { C } from '../components/Cores';
 
 const PERIODOS = ['Mês', 'Ano', 'Tudo'];
 
@@ -26,15 +16,6 @@ const CATEGORIAS = [
 ];
 
 const MESES = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-
-function dataDaObra(obra) {
-  const partes = (obra.dataConclusao || obra.ouvidoEm || '').split('/');
-  if (partes.length === 3) {
-    const d = new Date(Number(partes[2]), Number(partes[1]) - 1, Number(partes[0]));
-    if (!isNaN(d.getTime())) return d.getTime();
-  }
-  return obra.atualizadaEm || obra.criadaEm || 0;
-}
 
 function estaNoPeriodo(obra, periodo) {
   if (periodo === 'Tudo') return true;
@@ -115,14 +96,7 @@ export default function Estatisticas() {
 
   const concluidas = lista.filter((obra) => obra.status === 'Concluído').length;
 
-  const notas = lista
-    .map((obra) => parseFloat(String(obra.nota || '').replace(',', '.')))
-    .filter((n) => !isNaN(n));
-  const media = notas.length
-    ? (Math.round((notas.reduce((a, b) => a + b, 0) / notas.length) * 10) / 10)
-        .toString()
-        .replace('.', ',')
-    : '–';
+  const media = mediaDasNotas(lista);
 
   const contagens = CATEGORIAS.map((item) => ({
     ...item,
@@ -138,45 +112,45 @@ export default function Estatisticas() {
   const barraFina = atividade.itens.length > 6;
 
   return (
-    <SafeAreaView style={styles.tela}>
+    <SafeAreaView style={s.tela}>
       <ScrollView
-        contentContainerStyle={styles.conteudo}
+        contentContainerStyle={s.conteudo}
+        showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.titulo}>Estatísticas</Text>
+        <Text style={s.titulo}>Estatísticas</Text>
 
-        <View style={styles.seletor}>
+        <View style={s.seletor}>
           {PERIODOS.map((nome) => (
             <TouchableOpacity
               key={nome}
-              style={[styles.opcao, periodo === nome && styles.opcaoAtiva]}
+              style={[s.opcao, periodo === nome && s.opcaoAtiva]}
               onPress={() => setPeriodo(nome)}
               activeOpacity={0.8}
-
               accessibilityState={{ selected: periodo === nome }}
             >
-              <Text style={[styles.opcaoTexto, periodo === nome && styles.opcaoTextoAtivo]}>
+              <Text style={[s.opcaoTexto, periodo === nome && s.opcaoTextoAtivo]}>
                 {nome}
               </Text>
             </TouchableOpacity>
           ))}
         </View>
 
-        <View style={styles.linhaCartoes}>
+        <View style={s.linhaCartoes}>
           <CartaoNumero rotulo="Concluídas" valor={String(concluidas)} />
           <CartaoNumero rotulo="Nota média" valor={media} />
           <CartaoNumero rotulo="Mais ativo" valor={maisAtivo} pequeno />
         </View>
 
-        <View style={styles.bloco}>
-          <Text style={styles.blocoTitulo}>Por categoria</Text>
+        <View style={s.bloco}>
+          <Text style={s.blocoTitulo}>Por categoria</Text>
 
           {contagens.map((item) => (
-            <View key={item.categoria} style={styles.linhaCategoria}>
-              <Text style={styles.categoriaNome}>{item.rotulo}</Text>
-              <View style={styles.trilho}>
+            <View key={item.categoria} style={s.linhaCategoria}>
+              <Text style={s.categoriaNome}>{item.rotulo}</Text>
+              <View style={s.trilho}>
                 <View
                   style={[
-                    styles.preenchimento,
+                    s.preenchimento,
                     {
                       width: maiorCategoria > 0 ? `${(item.total / maiorCategoria) * 100}%` : '0%',
                       backgroundColor: item.cor,
@@ -184,25 +158,25 @@ export default function Estatisticas() {
                   ]}
                 />
               </View>
-              <Text style={styles.categoriaTotal}>{item.total}</Text>
+              <Text style={s.categoriaTotal}>{item.total}</Text>
             </View>
           ))}
         </View>
 
-        <View style={styles.bloco}>
-          <Text style={styles.blocoTitulo}>{atividade.titulo}</Text>
+        <View style={s.bloco}>
+          <Text style={s.blocoTitulo}>{atividade.titulo}</Text>
 
           {atividade.itens.length === 0 ? (
-            <Text style={styles.vazio}>Sem registros ainda.</Text>
+            <Text style={s.vazio}>Sem registros ainda.</Text>
           ) : (
-            <View style={styles.grafico}>
+            <View style={s.grafico}>
               {atividade.itens.map((item) => (
-                <View key={item.rotulo} style={styles.coluna}>
-                  <Text style={styles.barraValor}>{item.valor}</Text>
+                <View key={item.rotulo} style={s.coluna}>
+                  <Text style={s.barraValor}>{item.valor}</Text>
                   <View
                     style={[
-                      styles.barra,
-                      barraFina && styles.barraFina,
+                      s.barra,
+                      barraFina && s.barraFina,
                       {
                         height: Math.max(4, (item.valor / maiorBarra) * 96),
                         backgroundColor:
@@ -210,7 +184,7 @@ export default function Estatisticas() {
                       },
                     ]}
                   />
-                  <Text style={styles.barraRotulo}>{item.rotulo}</Text>
+                  <Text style={s.barraRotulo}>{item.rotulo}</Text>
                 </View>
               ))}
             </View>
@@ -221,7 +195,7 @@ export default function Estatisticas() {
   );
 }
 
-const styles = StyleSheet.create({
+const s = StyleSheet.create({
   tela: { flex: 1, backgroundColor: C.fundo },
   conteudo: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 24, gap: 16 },
 

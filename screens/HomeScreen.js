@@ -12,20 +12,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import firebase from '../config/config';
-
-const C = {
-  fundo: '#F4F5F9',
-  branco: '#FFFFFF',
-  azul: '#202A43',
-  azulCartao: '#303B5B',
-  lavanda: '#DCE3F4',
-  textoSecundario: '#55607A',
-  verde: '#8FE0CB',
-  linha: '#6F7890',
-  borda: '#D6DDF0',
-  legenda: '#E1E5F0',
-  overlay: 'rgba(32,42,67,0.5)',
-};
+import { PLURAL, dataDaObra } from '../components/Obras';
+import { C } from '../components/Cores';
 
 const sombra = {
   shadowColor: C.azul,
@@ -43,23 +31,6 @@ const circulo = (tamanho) => ({
   alignItems: 'center',
   justifyContent: 'center',
 });
-
-const PLURAL = {
-  Filme: 'Filmes',
-  Série: 'Séries',
-  Livro: 'Livros',
-  Jogo: 'Jogos',
-  Álbum: 'Álbuns',
-};
-
-function dataDaObra(obra) {
-  const partes = (obra.dataConclusao || obra.ouvidoEm || '').split('/');
-  if (partes.length === 3) {
-    const d = new Date(Number(partes[2]), Number(partes[1]) - 1, Number(partes[0]));
-    if (!isNaN(d.getTime())) return d.getTime();
-  }
-  return obra.atualizadaEm || obra.criadaEm || 0;
-}
 
 function quandoFoi(tempo) {
   const hoje = new Date();
@@ -142,25 +113,25 @@ function Botao({ texto, icone, variante = 'escuro', tamanho = 14, style, ...prop
   const v = VARIANTES[variante];
   return (
     <TouchableOpacity
-      style={[styles.botao, { backgroundColor: v.fundo }, style]}
+      style={[s.botao, { backgroundColor: v.fundo }, style]}
       activeOpacity={0.8}
       {...props}
     >
       {icone && <Ionicons name={icone} size={18} color={v.texto} />}
-      <Text style={[styles.botaoTexto, { color: v.texto, fontSize: tamanho }]}>{texto}</Text>
+      <Text style={[s.botaoTexto, { color: v.texto, fontSize: tamanho }]}>{texto}</Text>
     </TouchableOpacity>
   );
 }
 
 function Logo() {
   return (
-    <View style={styles.logoLinha}>
+    <View style={s.logoLinha}>
       <Image
         source={require('../assets/Logo.png')}
-        style={styles.logoImagem}
+        style={s.logoImagem}
         resizeMode="contain"
       />
-      <Text style={styles.logoTexto}>memora</Text>
+      <Text style={s.logoTexto}>memora</Text>
     </View>
   );
 }
@@ -170,26 +141,26 @@ function ResumoMensal({ concluidas, maisAtivo }) {
   const periodo = mes.charAt(0).toUpperCase() + mes.slice(1);
 
   return (
-    <View style={styles.resumo}>
-      <View style={styles.resumoCabecalho}>
-        <Text style={styles.resumoTexto}>Resumo do mês</Text>
-        <Text style={styles.resumoTexto}>{periodo}</Text>
+    <View style={s.resumo}>
+      <View style={s.resumoCabecalho}>
+        <Text style={s.resumoTexto}>Resumo do mês</Text>
+        <Text style={s.resumoTexto}>{periodo}</Text>
       </View>
 
-      <View style={styles.resumoCorpo}>
-        <View style={styles.resumoColuna}>
-          <Text style={styles.resumoLegenda}>Concluídas este mês</Text>
-          <Text style={styles.resumoNumero}>{concluidas}</Text>
+      <View style={s.resumoCorpo}>
+        <View style={s.resumoColuna}>
+          <Text style={s.resumoLegenda}>Concluídas este mês</Text>
+          <Text style={s.resumoNumero}>{concluidas}</Text>
         </View>
 
-        <View style={styles.resumoDivisor} />
+        <View style={s.resumoDivisor} />
 
-        <View style={styles.resumoColuna}>
-          <Text style={styles.resumoLegenda}>Mais ativo</Text>
+        <View style={s.resumoColuna}>
+          <Text style={s.resumoLegenda}>Mais ativo</Text>
           {maisAtivo ? (
-            <Text style={styles.resumoDestaque}>{maisAtivo.toUpperCase()}</Text>
+            <Text style={s.resumoDestaque}>{maisAtivo.toUpperCase()}</Text>
           ) : (
-            <Text style={styles.resumoAtividade}>Sem registros</Text>
+            <Text style={s.resumoAtividade}>Sem registros</Text>
           )}
         </View>
       </View>
@@ -199,16 +170,16 @@ function ResumoMensal({ concluidas, maisAtivo }) {
 
 function BibliotecaVazia({ onAdicionar }) {
   return (
-    <View style={styles.vazio}>
-      <View style={styles.iconeLivro}>
+    <View style={s.vazio}>
+      <View style={s.iconeLivro}>
         <Ionicons name="book-outline" size={36} color={C.azul} />
-        <View style={styles.seloMais}>
+        <View style={s.seloMais}>
           <Ionicons name="add" size={16} color={C.azul} />
         </View>
       </View>
 
-      <Text style={styles.vazioTitulo}>Sua história começa aqui</Text>
-      <Text style={styles.vazioDescricao}>
+      <Text style={s.vazioTitulo}>Sua história começa aqui</Text>
+      <Text style={s.vazioDescricao}>
         Livros, filmes, séries, jogos e álbuns.
         {'\n'}Adicione sua primeira obra e guarde
         {'\n'}cada descoberta no Memora.
@@ -218,7 +189,7 @@ function BibliotecaVazia({ onAdicionar }) {
         texto="Adicionar primeira obra"
         icone="add"
         onPress={onAdicionar}
-        style={styles.botaoLargo}
+        style={s.botaoLargo}
       />
     </View>
   );
@@ -226,18 +197,18 @@ function BibliotecaVazia({ onAdicionar }) {
 
 function AtividadeRecente({ itens, onAbrir }) {
   return (
-    <View style={styles.atividade}>
-      <Text style={styles.atividadeTituloSecao}>Atividade recente</Text>
+    <View style={s.atividade}>
+      <Text style={s.atividadeTituloSecao}>Atividade recente</Text>
 
       {itens.length === 0 ? (
-        <View style={styles.atividadeLinha}>
-          <View style={styles.atividadeIcone}>
-            <Ionicons name="time-outline" size={22} color={C.textoSecundario} />
+        <View style={s.atividadeLinha}>
+          <View style={s.atividadeIcone}>
+            <Ionicons name="time-outline" size={22} color={C.texto} />
           </View>
 
-          <View style={styles.atividadeTextos}>
-            <Text style={styles.atividadeTitulo}>Tudo pronto para começar</Text>
-            <Text style={styles.atividadeDescricao}>
+          <View style={s.atividadeTextos}>
+            <Text style={s.atividadeTitulo}>Tudo pronto para começar</Text>
+            <Text style={s.atividadeDescricao}>
               Suas atualizações aparecerão aqui.
             </Text>
           </View>
@@ -246,19 +217,19 @@ function AtividadeRecente({ itens, onAbrir }) {
         itens.map((item) => (
           <TouchableOpacity
             key={item.id}
-            style={[styles.atividadeLinha, styles.atividadeItem]}
+            style={[s.atividadeLinha, s.atividadeItem]}
             activeOpacity={0.7}
             onPress={() => onAbrir(item.id)}
           >
-            <View style={[styles.atividadeIcone, item.verde && { backgroundColor: C.verde }]}>
+            <View style={[s.atividadeIcone, item.verde && { backgroundColor: C.menta }]}>
               <Ionicons name={item.icone} size={22} color={C.azul} />
             </View>
 
-            <View style={styles.atividadeTextos}>
-              <Text style={styles.atividadeTitulo} numberOfLines={1}>
+            <View style={s.atividadeTextos}>
+              <Text style={s.atividadeTitulo} numberOfLines={1}>
                 {item.titulo}
               </Text>
-              <Text style={styles.atividadeDescricao}>{item.descricao}</Text>
+              <Text style={s.atividadeDescricao}>{item.descricao}</Text>
             </View>
           </TouchableOpacity>
         ))
@@ -270,12 +241,12 @@ function AtividadeRecente({ itens, onAbrir }) {
 function ModalProgresso({ visivel, obras, onFechar, onEscolher }) {
   return (
     <Modal visible={visivel} transparent animationType="fade" onRequestClose={onFechar}>
-      <Pressable style={styles.modalFundo} onPress={onFechar}>
-        <Pressable style={styles.modalCartao} onPress={() => {}}>
-          <Text style={styles.modalTitulo}>Registrar progresso</Text>
+      <Pressable style={s.modalFundo} onPress={onFechar}>
+        <Pressable style={s.modalCartao} onPress={() => {}}>
+          <Text style={s.modalTitulo}>Registrar progresso</Text>
 
           {obras.length === 0 ? (
-            <Text style={styles.modalTexto}>
+            <Text style={s.modalTexto}>
               Nenhuma obra em andamento. Mude o status de uma obra para "Em
               andamento" para registrar o progresso aqui.
             </Text>
@@ -284,15 +255,15 @@ function ModalProgresso({ visivel, obras, onFechar, onEscolher }) {
               {obras.map((obra) => (
                 <TouchableOpacity
                   key={obra.id}
-                  style={styles.modalLinha}
+                  style={s.modalLinha}
                   activeOpacity={0.7}
                   onPress={() => onEscolher(obra.id)}
                 >
                   <View style={{ flex: 1 }}>
-                    <Text style={styles.atividadeTitulo} numberOfLines={1}>
+                    <Text style={s.atividadeTitulo} numberOfLines={1}>
                       {obra.titulo}
                     </Text>
-                    <Text style={styles.atividadeDescricao}>{obra.categoria}</Text>
+                    <Text style={s.atividadeDescricao}>{obra.categoria}</Text>
                   </View>
                   <Ionicons name="chevron-forward" size={20} color={C.azul} />
                 </TouchableOpacity>
@@ -305,7 +276,7 @@ function ModalProgresso({ visivel, obras, onFechar, onEscolher }) {
             variante="lavanda"
             tamanho={15}
             onPress={onFechar}
-            style={styles.modalFechar}
+            style={s.modalFechar}
           />
         </Pressable>
       </Pressable>
@@ -331,14 +302,14 @@ export default function HomeScreen({ navigation }) {
   const abrirObra = (id) => navigation.navigate('DetalhesObra', { id });
 
   return (
-    <SafeAreaView style={styles.tela}>
+    <SafeAreaView style={s.tela}>
       <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.conteudo}
+        style={s.scroll}
+        contentContainerStyle={s.conteudo}
         showsVerticalScrollIndicator={false}
       >
         <Logo />
-        <Text style={styles.slogan}>Sua história, em cada descoberta</Text>
+        <Text style={s.slogan}>Sua história, em cada descoberta</Text>
 
         {obras && (
           <>
@@ -347,17 +318,17 @@ export default function HomeScreen({ navigation }) {
             {obras.length === 0 ? (
               <BibliotecaVazia onAdicionar={novaObra} />
             ) : (
-              <View style={styles.botoes}>
+              <View style={s.botoes}>
                 <Botao
                   texto="+ Nova obra"
                   onPress={novaObra}
-                  style={styles.botaoHome}
+                  style={s.botaoHome}
                 />
                 <Botao
                   texto="Registrar Progresso"
                   variante="claro"
                   onPress={() => setProgressoAberto(true)}
-                  style={styles.botaoHome}
+                  style={s.botaoHome}
                 />
               </View>
             )}
@@ -380,7 +351,7 @@ export default function HomeScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const s = StyleSheet.create({
   tela: { flex: 1, backgroundColor: C.fundo },
   scroll: { flex: 1 },
   conteudo: { paddingHorizontal: 24, paddingTop: 16, paddingBottom: 24 },
@@ -404,7 +375,7 @@ const styles = StyleSheet.create({
     backgroundColor: C.azul,
     borderRadius: 20,
     borderWidth: 2,
-    borderColor: C.borda,
+    borderColor: C.bordaResumo,
     padding: 12,
   },
   resumoCabecalho: {
@@ -425,12 +396,12 @@ const styles = StyleSheet.create({
   resumoNumero: { fontSize: 36, lineHeight: 44, color: C.branco, fontWeight: '400' },
   resumoDestaque: { fontSize: 30, lineHeight: 44, color: C.branco, fontWeight: '300' },
   resumoAtividade: { fontSize: 17, color: C.branco, marginTop: 8 },
-  resumoDivisor: { width: 1, backgroundColor: C.linha, marginHorizontal: 12 },
+  resumoDivisor: { width: 1, backgroundColor: C.divisorEscuro, marginHorizontal: 12 },
   vazio: { alignItems: 'center', marginTop: 28 },
   iconeLivro: { ...circulo(76), marginBottom: 16 },
   seloMais: {
     ...circulo(26),
-    backgroundColor: C.verde,
+    backgroundColor: C.menta,
     position: 'absolute',
     right: -2,
     bottom: 0,
@@ -443,7 +414,7 @@ const styles = StyleSheet.create({
     color: C.azul,
   },
   vazioDescricao: {
-    color: C.textoSecundario,
+    color: C.texto,
     fontSize: 15,
     lineHeight: 21,
     textAlign: 'center',
@@ -457,7 +428,7 @@ const styles = StyleSheet.create({
   atividadeIcone: { ...circulo(46), marginRight: 12 },
   atividadeTextos: { flex: 1 },
   atividadeTitulo: { fontSize: 14, fontWeight: '600', color: C.azul },
-  atividadeDescricao: { fontSize: 13, color: C.textoSecundario, marginTop: 4 },
+  atividadeDescricao: { fontSize: 13, color: C.texto, marginTop: 4 },
 
   modalFundo: {
     flex: 1,
@@ -474,7 +445,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   modalTitulo: { fontSize: 18, fontWeight: '800', color: C.azul, marginBottom: 8 },
-  modalTexto: { fontSize: 14, lineHeight: 20, color: C.textoSecundario },
+  modalTexto: { fontSize: 14, lineHeight: 20, color: C.texto },
   modalLinha: {
     flexDirection: 'row',
     alignItems: 'center',

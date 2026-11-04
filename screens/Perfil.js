@@ -5,15 +5,8 @@ import { CommonActions } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import firebase from '../config/config';
 import { vibrar } from '../components/Haptico';
-
-const C = {
-  fundo: '#F4F5F9',
-  branco: '#FFFFFF',
-  azul: '#202A43',
-  lavanda: '#DCE3F4',
-  texto: '#55607A',
-  linha: '#E6E9F3',
-};
+import { mediaDasNotas } from '../components/Obras';
+import { C } from '../components/Cores';
 
 const JORNADA = [
   { categoria: 'Livro', rotulo: 'livros' },
@@ -64,14 +57,7 @@ export default function Perfil({ navigation }) {
 
   const concluidas = obras.filter((obra) => obra.status === 'Concluído').length;
 
-  const notas = obras
-    .map((obra) => parseFloat(String(obra.nota || '').replace(',', '.')))
-    .filter((n) => !isNaN(n));
-  const media = notas.length
-    ? (Math.round((notas.reduce((a, b) => a + b, 0) / notas.length) * 10) / 10)
-        .toString()
-        .replace('.', ',')
-    : '–';
+  const media = mediaDasNotas(obras);
 
   const resumo = [
     { rotulo: 'Na biblioteca', valor: String(obras.length) },
@@ -123,7 +109,6 @@ export default function Perfil({ navigation }) {
           ))}
         </View>
 
-        <Text style={s.secao}>Preferências</Text>
         <View style={s.cartao}>
           <Pressable
             style={s.linha}

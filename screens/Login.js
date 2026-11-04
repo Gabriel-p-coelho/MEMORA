@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { View, Text, TouchableOpacity, Alert, StyleSheet } from 'react-native';
 import {
-  C,
   TelaAuth,
   Titulo,
   Campo,
   BotaoPrincipal,
 } from '../components/Auth';
 import firebase from '../config/config';
+import { C } from '../components/Cores';
 
 export default function Login({ navigation }) {
   const [usuario, setUsuario] = useState('');
@@ -37,7 +37,7 @@ export default function Login({ navigation }) {
   return (
     <TelaAuth>
       <Titulo
-        titulo={'Que bom ter você de volta.'}
+        titulo="Que bom ter você de volta."
         subtitulo="Entre para continuar sua jornada cultural."
       />
 
@@ -75,6 +75,6 @@ export default function Login({ navigation }) {
 
 const s = StyleSheet.create({
   rodape: { alignItems: 'center', marginTop: 28 },
-  rodapeTexto: { fontSize: 13, color: C.cinza, marginBottom: 6 },
+  rodapeTexto: { fontSize: 13, color: C.textoSuave, marginBottom: 6 },
   link: { fontSize: 14, fontWeight: '700', color: C.azul },
 });

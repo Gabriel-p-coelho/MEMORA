@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { View, Text, TouchableOpacity, Alert, StyleSheet } from 'react-native';
 import firebase from '../config/config';
-import { C, TelaAuth, Titulo, Campo, BotaoPrincipal } from '../components/Auth';
+import { TelaAuth, Titulo, Campo, BotaoPrincipal } from '../components/Auth';
+import { C } from '../components/Cores';
 
 export default function Cadastro({ navigation }) {
   const [usuario, setUsuario] = useState('');
@@ -50,7 +51,7 @@ export default function Cadastro({ navigation }) {
       <Campo
         label="Email"
         icone="person-outline"
-        placeholder="Digite seu Email"
+        placeholder="Digite seu email"
         value={usuario}
         onChangeText={setUsuario}
       />
@@ -94,6 +95,6 @@ const s = StyleSheet.create({
     alignItems: 'center',
     marginTop: 28,
   },
-  rodapeTexto: { fontSize: 13, color: C.cinza },
+  rodapeTexto: { fontSize: 13, color: C.textoSuave },
   link: { fontSize: 14, fontWeight: '700', color: C.azul },
 });
