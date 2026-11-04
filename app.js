@@ -18,16 +18,10 @@ import Perfil from './screens/Perfil';
 import DetalhesObra from './screens/DetalhesObra';
 import Estatisticas from './screens/Estatisticas';
 import Diario from './screens/Diario';
+import { C } from './components/Cores';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
-
-const C = {
-  fundo: '#F4F5F9',
-  azul: '#202A43',
-  inativo: '#6B7798',
-  branco: '#FFFFFF',
-};
 
 const temaNavegacao = {
   ...DefaultTheme,
@@ -52,11 +46,11 @@ function Abas() {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarActiveTintColor: C.azul,
-        tabBarInactiveTintColor: C.inativo,
+        tabBarInactiveTintColor: C.textoSuave,
         tabBarStyle: {
           height: 64 + insets.bottom,
           backgroundColor: C.branco,
-          borderTopColor: '#E9EBF2',
+          borderTopColor: C.bordaClara,
           paddingTop: 8,
           paddingBottom: insets.bottom + 6,
         },
