@@ -61,9 +61,9 @@ function montarAtividade(lista, periodo) {
 
 function CartaoNumero({ rotulo, valor, pequeno }) {
   return (
-    <View style={styles.cartaoNumero}>
-      <Text style={styles.cartaoRotulo}>{rotulo}</Text>
-      <Text style={[styles.cartaoValor, pequeno && styles.cartaoValorPequeno]}>
+    <View style={s.cartaoNumero}>
+      <Text style={s.cartaoRotulo}>{rotulo}</Text>
+      <Text style={[s.cartaoValor, pequeno && s.cartaoValorPequeno]}>
         {valor}
       </Text>
     </View>

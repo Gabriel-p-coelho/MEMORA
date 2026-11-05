@@ -240,7 +240,7 @@ function Calendario({ valor, onSelecionar, onFechar }) {
             </TouchableOpacity>
           </View>
 
-          <View style={styles.calSemana}>
+          <View style={s.calSemana}>
             {DIAS_SEMANA.map((d, i) => (
               <Text key={i} style={s.calDiaSemana}>
                 {d}
