@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import firebase from '../config/config';
-import { dataDaObra } from '../components/Obras';
+import { dataDaObra, lerObras } from '../components/Obras';
 import { C } from '../components/Cores';
 
 const MESES = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
 
+// Texto do dia na linha do tempo: 'HOJE · 5 NOV', 'ONTEM · ...' ou só a data.
 function rotuloDoDia(tempo) {
   const dia = new Date(tempo);
   dia.setHours(0, 0, 0, 0);
@@ -23,6 +23,7 @@ function rotuloDoDia(tempo) {
   return texto;
 }
 
+// Linha de detalhe de cada registro (nota, páginas lidas, horas...) conforme a categoria.
 function detalhe(obra) {
   if (obra.status === 'Concluído') {
     return obra.categoria + (obra.nota ? ' · nota ' + obra.nota : '');
@@ -71,24 +72,9 @@ function Registro({ obra }) {
 export default function Diario({ navigation }) {
   const [obras, setObras] = useState([]);
 
-  useEffect(() => {
-    const uid = firebase.auth().currentUser.uid;
-    const ref = firebase.database().ref('/usuarios/' + uid + '/obras');
+  useEffect(() => lerObras(setObras), []);
 
-    const escutar = ref.on('value', (snapshot) => {
-      const data = snapshot.val();
-
-      if (data == null) {
-        setObras([]);
-        return;
-      }
-
-      setObras(Object.keys(data).map((id) => ({ ...data[id], id: id })));
-    });
-
-    return () => ref.off('value', escutar);
-  }, []);
-
+  // Ordena da mais recente para a mais antiga e agrupa as obras por dia.
   const ordenadas = [...obras].sort((a, b) => dataDaObra(b) - dataDaObra(a));
   const dias = [];
   ordenadas.forEach((obra) => {

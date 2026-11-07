@@ -37,6 +37,7 @@ const icones = {
 
 const TelaVazia = () => null;
 
+// Navegação por abas (barra de baixo). O botão do meio abre a tela Adicionar.
 function Abas() {
   const insets = useSafeAreaInsets();
 
@@ -108,6 +109,7 @@ function Abas() {
   );
 }
 
+// Navegação principal:
 export default function App() {
   return (
     <SafeAreaProvider>

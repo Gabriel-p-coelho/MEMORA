@@ -14,6 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { C } from './Cores';
 
+// Componentes visuais compartilhados por Login e Cadastro.
 export function Logo() {
   return (
     <View style={s.logoWrap}>

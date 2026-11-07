@@ -12,7 +12,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import firebase from '../config/config';
-import { CATEGORIAS } from '../components/Formulario';
+import { CATEGORIAS, lerNota } from '../components/Obras';
 import { vibrar } from '../components/Haptico';
 import { C } from '../components/Cores';
 
@@ -22,21 +22,6 @@ const ICONES_STATUS = {
   Concluído: 'checkmark',
   Abandonado: 'close',
 };
-
-const CAMPO_AUTORIA = {
-  Filme: 'direcao',
-  Livro: 'autor',
-  Jogo: 'plataforma',
-  Álbum: 'artista',
-};
-
-const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
-
-function dataPorExtenso(texto) {
-  const partes = (texto || '').split('/');
-  if (partes.length !== 3) return '';
-  return `${Number(partes[0])} ${MESES[Number(partes[1]) - 1]} ${partes[2]}`;
-}
 
 function Estrelas({ nota }) {
   return (
@@ -77,12 +62,14 @@ export default function DetalhesObra({ navigation, route }) {
   const uid = firebase.auth().currentUser.uid;
   const caminho = '/usuarios/' + uid + '/obras/' + id;
 
+  // Escuta a obra no banco (on('value')) e atualiza a tela quando ela mudar.
   useEffect(() => {
     const ref = firebase.database().ref(caminho);
     const escutar = ref.on('value', (snapshot) => setObra(snapshot.val()));
     return () => ref.off('value', escutar);
   }, [caminho]);
 
+  // Remove a obra do Realtime Database (D do CRUD).
   function excluir() {
     firebase
       .database()
@@ -95,6 +82,7 @@ export default function DetalhesObra({ navigation, route }) {
       .catch(() => Alert.alert('Erro', 'Não foi possível excluir. Tente novamente.'));
   }
 
+  // Pede confirmação antes de excluir.
   function confirmarExclusao() {
     Alert.alert(
       'Excluir obra?',
@@ -109,13 +97,12 @@ export default function DetalhesObra({ navigation, route }) {
   if (!obra) return <View style={s.tela} />;
 
   const config = CATEGORIAS[obra.categoria];
-  const dataConclusao = dataPorExtenso(obra.dataConclusao || obra.ouvidoEm);
-  const nota = parseFloat(String(obra.nota || '').replace(',', '.'));
+  const dataConclusao = obra.concluidaEm ? new Date(obra.concluidaEm).toLocaleDateString('pt-BR') : '';
+  const nota = lerNota(obra.nota);
   const temNota = !isNaN(nota);
 
-  const subtitulo = [obra.categoria, obra[CAMPO_AUTORIA[obra.categoria]], obra.genero]
-    .filter(Boolean)
-    .join(' · ');
+  const autoria = obra.direcao || obra.autor || obra.plataforma || obra.artista;
+  const subtitulo = [obra.categoria, autoria, obra.genero].filter(Boolean).join(' · ');
 
   let extra = null;
   if (obra.categoria === 'Livro' && Number(obra.totalPaginas) > 0) {
@@ -201,7 +188,6 @@ export default function DetalhesObra({ navigation, route }) {
         <TouchableOpacity
           style={[s.botao, s.botaoEditar]}
           activeOpacity={0.8}
-          accessibilityRole="button"
           onPress={() => navigation.navigate('AdicionarConteudo', { id })}>
           <Ionicons name="pencil-outline" size={18} color={C.branco} />
           <Text style={s.botaoEditarTexto}>Editar</Text>
@@ -210,7 +196,6 @@ export default function DetalhesObra({ navigation, route }) {
         <TouchableOpacity
           style={[s.botao, s.botaoExcluir]}
           activeOpacity={0.8}
-          accessibilityRole="button"
           onPress={confirmarExclusao}>
           <Ionicons name="trash-outline" size={18} color={C.azul} />
           <Text style={s.botaoExcluirTexto}>Excluir</Text>

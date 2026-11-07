@@ -1,366 +1,16 @@
-import { useState } from 'react';
-import {
-  Modal,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { CATEGORIAS, STATUS } from './Obras';
 import { C } from './Cores';
 
-export const STATUS = ['Planejado', 'Em andamento', 'Concluído', 'Abandonado'];
-
-export const CATEGORIAS = {
-  Filme: {
-    status: ['Planejado', 'Concluído', 'Abandonado'],
-    icone: 'film-outline',
-    imagem: 'Pôster',
-    semImagem: 'Sem pôster',
-    titulo: 'Título',
-    linhas: [
-      [
-        { chave: 'direcao', rotulo: 'Direção' },
-        { chave: 'genero', rotulo: 'Gênero', dica: 'Ex.: suspense' },
-      ],
-    ],
-    linhasFinais: [
-      [
-        {
-          chave: 'dataConclusao',
-          rotulo: 'Data de conclusão',
-          dica: 'dd/mm/aaaa',
-        },
-        {
-          chave: 'nota',
-          rotulo: 'Nota (0 a 5)',
-          dica: 'Ex.: 4,5',
-        },
-      ],
-    ],
-  },
-  Série: {
-    icone: 'tv-outline',
-    imagem: 'Pôster',
-    semImagem: 'Sem pôster',
-    titulo: 'Título',
-    linhas: [[{ chave: 'genero', rotulo: 'Gênero', dica: 'Ex.: drama' }]],
-    linhasFinais: [
-      [
-        { chave: 'temporada', rotulo: 'Temporada', teclado: 'number-pad' },
-        { chave: 'totalEps', rotulo: 'Total de eps', teclado: 'number-pad' },
-        {
-          chave: 'nota',
-          rotulo: 'Nota (0 a 5)',
-          dica: 'Ex.: 4,5',
-        },
-      ],
-    ],
-  },
-  Livro: {
-    icone: 'book-outline',
-    imagem: 'Capa',
-    semImagem: 'Sem capa',
-    titulo: 'Título',
-    linhas: [
-      [
-        { chave: 'autor', rotulo: 'Autor' },
-        { chave: 'genero', rotulo: 'Gênero', dica: 'Ex.: drama' },
-      ],
-    ],
-    linhasFinais: [
-      [
-        {
-          chave: 'paginasLidas',
-          rotulo: 'Págs. lidas',
-          teclado: 'number-pad',
-        },
-        {
-          chave: 'totalPaginas',
-          rotulo: 'Total de págs.',
-          teclado: 'number-pad',
-        },
-        {
-          chave: 'nota',
-          rotulo: 'Nota (0 a 5)',
-          dica: 'Ex.: 4,5',
-        },
-      ],
-    ],
-  },
-  Jogo: {
-    icone: 'game-controller-outline',
-    imagem: 'Capa',
-    semImagem: 'Sem capa',
-    titulo: 'Título',
-    linhas: [
-      [{ chave: 'plataforma', rotulo: 'Plataforma', dica: 'Ex.: PC, Switch' }],
-    ],
-    linhasFinais: [
-      [
-        { chave: 'horas', rotulo: 'Horas jogadas', teclado: 'decimal-pad' },
-        {
-          chave: 'nota',
-          rotulo: 'Nota (0 a 5)',
-          dica: 'Ex.: 4,5',
-        },
-      ],
-    ],
-  },
-  Álbum: {
-    icone: 'musical-notes-outline',
-    imagem: 'Capa',
-    semImagem: 'Sem capa',
-    titulo: 'Título do álbum',
-    linhas: [
-      [
-        { chave: 'artista', rotulo: 'Artista' },
-        { chave: 'genero', rotulo: 'Gênero', dica: 'Ex.: rock' },
-      ],
-    ],
-    linhasFinais: [
-      [
-        { chave: 'ouvidoEm', rotulo: 'Ouvido em', dica: 'dd/mm/aaaa' },
-        {
-          chave: 'nota',
-          rotulo: 'Nota (0 a 5)',
-          dica: 'Ex.: 4,5',
-        },
-      ],
-    ],
-  },
-};
-
-const ORDEM = ['Filme', 'Série', 'Livro', 'Jogo', 'Álbum'];
-
+// Parte visual do formulário de obras (usada em AdicionarConteudo).
 function Rotulo({ children }) {
   return <Text style={s.rotulo}>{children}</Text>;
 }
 
-const CAMPOS_DATA = ['dataConclusao', 'ouvidoEm'];
-const MESES = [
-  'Janeiro',
-  'Fevereiro',
-  'Março',
-  'Abril',
-  'Maio',
-  'Junho',
-  'Julho',
-  'Agosto',
-  'Setembro',
-  'Outubro',
-  'Novembro',
-  'Dezembro',
-];
-const DIAS_SEMANA = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
-
-const doisDigitos = (n) => String(n).padStart(2, '0');
-
-function formatarData(data) {
-  return `${doisDigitos(data.getDate())}/${doisDigitos(
-    data.getMonth() + 1
-  )}/${data.getFullYear()}`;
-}
-
-function lerData(texto) {
-  const partes = (texto || '').split('/');
-  if (partes.length !== 3) return null;
-  const data = new Date(
-    Number(partes[2]),
-    Number(partes[1]) - 1,
-    Number(partes[0])
-  );
-  return isNaN(data.getTime()) ? null : data;
-}
-
-function limparNota(texto) {
-  const t = texto.replace(/\./g, ',').replace(/[^0-9,]/g, '');
-  const [inteiro, ...resto] = t.split(',');
-  return resto.length ? `${inteiro},${resto.join('').slice(0, 1)}` : inteiro;
-}
-
-function notaValida(texto) {
-  if (texto === '') return true;
-  const numero = parseFloat(texto.replace(',', '.'));
-  return !isNaN(numero) && numero >= 0 && numero <= 5;
-}
-
-function Calendario({ valor, onSelecionar, onFechar }) {
-  const hoje = new Date();
-  hoje.setHours(0, 0, 0, 0);
-  const inicial = lerData(valor) || hoje;
-  const selecionada = lerData(valor);
-
-  const [ano, setAno] = useState(inicial.getFullYear());
-  const [mes, setMes] = useState(inicial.getMonth());
-
-  const ehMesAtual = ano === hoje.getFullYear() && mes === hoje.getMonth();
-
-  const mudarMes = (delta) => {
-    const nova = new Date(ano, mes + delta, 1);
-    setAno(nova.getFullYear());
-    setMes(nova.getMonth());
-  };
-
-  const primeiroDiaSemana = new Date(ano, mes, 1).getDay();
-  const totalDias = new Date(ano, mes + 1, 0).getDate();
-  const celulas = [
-    ...Array(primeiroDiaSemana).fill(null),
-    ...Array.from({ length: totalDias }, (_, i) => i + 1),
-  ];
-  while (celulas.length % 7 !== 0) celulas.push(null);
-  const semanas = [];
-  for (let i = 0; i < celulas.length; i += 7)
-    semanas.push(celulas.slice(i, i + 7));
-
+export function CampoTexto({ rotulo, valor, onChange, dica, teclado, maxLength, style }) {
   return (
-    <Modal visible transparent animationType="fade" onRequestClose={onFechar}>
-      <Pressable style={s.calFundo} onPress={onFechar}>
-        <Pressable style={s.calCartao} onPress={() => {}}>
-          <View style={s.calCabecalho}>
-            <TouchableOpacity
-              onPress={() => mudarMes(-1)}
-              hitSlop={10}>
-              <Ionicons name="chevron-back" size={22} color={C.azul} />
-            </TouchableOpacity>
-            <Text style={s.calMes}>
-              {MESES[mes]} {ano}
-            </Text>
-            <TouchableOpacity
-              onPress={() => mudarMes(1)}
-              disabled={ehMesAtual}
-              hitSlop={10}>
-              <Ionicons
-                name="chevron-forward"
-                size={22}
-                color={ehMesAtual ? C.borda : C.azul}
-              />
-            </TouchableOpacity>
-          </View>
-
-          <View style={s.calSemana}>
-            {DIAS_SEMANA.map((d, i) => (
-              <Text key={i} style={s.calDiaSemana}>
-                {d}
-              </Text>
-            ))}
-          </View>
-
-          {semanas.map((semana, i) => (
-            <View key={i} style={s.calSemana}>
-              {semana.map((dia, j) => {
-                if (!dia) return <View key={j} style={s.calCelula} />;
-                const data = new Date(ano, mes, dia);
-                const futuro = data > hoje;
-                const ativo =
-                  selecionada && data.getTime() === selecionada.getTime();
-                return (
-                  <TouchableOpacity
-                    key={j}
-                    style={s.calCelula}
-                    disabled={futuro}
-                    onPress={() => onSelecionar(formatarData(data))}
-                    activeOpacity={0.7}>
-                    <View style={[s.calDia, ativo && s.calDiaAtivo]}>
-                      <Text
-                        style={[
-                          s.calDiaTexto,
-                          futuro && s.calDiaTextoDesativado,
-                          ativo && s.calDiaTextoAtivo,
-                        ]}>
-                        {dia}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-          ))}
-
-          <View style={s.calRodape}>
-            <TouchableOpacity onPress={() => onSelecionar('')} hitSlop={10}>
-              <Text style={s.calAcao}>Limpar</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={onFechar} hitSlop={10}>
-              <Text style={s.calAcao}>Fechar</Text>
-            </TouchableOpacity>
-          </View>
-        </Pressable>
-      </Pressable>
-    </Modal>
-  );
-}
-
-function CampoData({ campo, valor, onChange }) {
-  const [aberto, setAberto] = useState(false);
-
-  return (
-    <View style={s.campo}>
-      <Rotulo>{campo.rotulo}</Rotulo>
-      <TouchableOpacity
-        style={[s.input, s.inputData]}
-        onPress={() => setAberto(true)}
-        activeOpacity={0.8}
-        accessibilityRole="button"
-        accessibilityLabel={`${campo.rotulo}: abrir calendário`}>
-        <Text
-          style={valor ? s.inputDataTexto : s.inputDataDica}
-          numberOfLines={1}>
-          {valor || campo.dica}
-        </Text>
-        <Ionicons name="calendar-outline" size={18} color={C.texto} />
-      </TouchableOpacity>
-
-      {aberto && (
-        <Calendario
-          valor={valor}
-          onFechar={() => setAberto(false)}
-          onSelecionar={(data) => {
-            onChange(data);
-            setAberto(false);
-          }}
-        />
-      )}
-    </View>
-  );
-}
-
-function CampoNota({ campo, valor, onChange }) {
-  const [erro, setErro] = useState(false);
-
-  const aoDigitar = (texto) => {
-    const limpo = limparNota(texto);
-    if (notaValida(limpo)) {
-      setErro(false);
-      onChange(limpo);
-    } else {
-      setErro(true);
-    }
-  };
-
-  return (
-    <View style={s.campo}>
-      <Rotulo>{campo.rotulo}</Rotulo>
-      <TextInput
-        style={[s.input, erro && s.inputErro]}
-        value={valor}
-        onChangeText={aoDigitar}
-        onBlur={() => setErro(false)}
-        placeholder={campo.dica}
-        placeholderTextColor={C.placeholder}
-        keyboardType="decimal-pad"
-        maxLength={3}
-      />
-      {erro ? <Text style={s.erro}>Use um valor de 0 a 5</Text> : null}
-    </View>
-  );
-}
-
-export function CampoTexto({ rotulo, valor, onChange, dica, teclado }) {
-  return (
-    <View style={s.campo}>
+    <View style={style}>
       <Rotulo>{rotulo}</Rotulo>
       <TextInput
         style={s.input}
@@ -369,41 +19,8 @@ export function CampoTexto({ rotulo, valor, onChange, dica, teclado }) {
         placeholder={dica}
         placeholderTextColor={C.placeholder}
         keyboardType={teclado || 'default'}
+        maxLength={maxLength}
       />
-    </View>
-  );
-}
-
-function Campo({ campo, valor, onChange }) {
-  if (CAMPOS_DATA.includes(campo.chave)) {
-    return <CampoData campo={campo} valor={valor} onChange={onChange} />;
-  }
-  if (campo.chave === 'nota') {
-    return <CampoNota campo={campo} valor={valor} onChange={onChange} />;
-  }
-
-  return (
-    <CampoTexto
-      rotulo={campo.rotulo}
-      valor={valor}
-      onChange={onChange}
-      dica={campo.dica}
-      teclado={campo.teclado}
-    />
-  );
-}
-
-export function LinhaDeCampos({ campos, valores, onChange }) {
-  return (
-    <View style={s.linha}>
-      {campos.map((campo) => (
-        <Campo
-          key={campo.chave}
-          campo={campo}
-          valor={valores[campo.chave] || ''}
-          onChange={(texto) => onChange(campo.chave, texto)}
-        />
-      ))}
     </View>
   );
 }
@@ -411,7 +28,7 @@ export function LinhaDeCampos({ campos, valores, onChange }) {
 export function SeletorCategoria({ selecionada, onSelecionar }) {
   return (
     <View style={s.categorias}>
-      {ORDEM.map((nome) => {
+      {Object.keys(CATEGORIAS).map((nome) => {
         const ativa = selecionada === nome;
         return (
           <TouchableOpacity
@@ -424,11 +41,7 @@ export function SeletorCategoria({ selecionada, onSelecionar }) {
               size={20}
               color={ativa ? C.branco : C.azul}
             />
-            <Text
-              style={[
-                s.categoriaTexto,
-                ativa && s.categoriaTextoAtivo,
-              ]}>
+            <Text style={[s.categoriaTexto, ativa && s.categoriaTextoAtivo]}>
               {nome}
             </Text>
           </TouchableOpacity>
@@ -438,15 +51,16 @@ export function SeletorCategoria({ selecionada, onSelecionar }) {
   );
 }
 
+// Por enquanto só visual: os botões ainda não escolhem imagem.
 export function SecaoImagem({ categoria }) {
-  const { imagem, semImagem } = CATEGORIAS[categoria];
+  const { imagem } = CATEGORIAS[categoria];
   return (
     <View>
       <Rotulo>{imagem} (opcional)</Rotulo>
       <View style={s.imagemLinha}>
         <View style={s.imagemVazia}>
           <Ionicons name="image-outline" size={24} color={C.azul} />
-          <Text style={s.imagemVaziaTexto}>{semImagem}</Text>
+          <Text style={s.imagemVaziaTexto}>Sem {imagem.toLowerCase()}</Text>
         </View>
 
         <View style={s.imagemBotoes}>
@@ -478,17 +92,9 @@ export function SeletorStatus({ selecionado, onSelecionar, lista = STATUS }) {
               onPress={() => onSelecionar(status)}
               activeOpacity={0.8}>
               {ativo ? (
-                <Ionicons
-                  name="checkmark"
-                  size={15}
-                  color={C.azul}
-                  style={s.statusCheck}
-                />
+                <Ionicons name="checkmark" size={15} color={C.azul} style={s.statusCheck} />
               ) : null}
-              <Text
-                style={[s.statusTexto, ativo && s.statusTextoAtivo]}>
-                {status}es
-              </Text>
+              <Text style={[s.statusTexto, ativo && s.statusTextoAtivo]}>{status}</Text>
             </TouchableOpacity>
           );
         })}
@@ -543,8 +149,6 @@ const s = StyleSheet.create({
   },
   botaoImagemTexto: { fontSize: 14, fontWeight: '600', color: C.azul },
 
-  campo: { flex: 1 },
-  linha: { flexDirection: 'row', gap: 12 },
   input: {
     height: 48,
     borderRadius: 14,
@@ -555,71 +159,6 @@ const s = StyleSheet.create({
     fontSize: 15,
     color: C.azul,
   },
-
-  inputErro: { borderColor: C.erro },
-  erro: { fontSize: 12, color: C.erro, marginTop: 4 },
-  inputData: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  inputDataTexto: { flex: 1, fontSize: 15, color: C.azul },
-  inputDataDica: { flex: 1, fontSize: 15, color: C.placeholder },
-
-  calFundo: {
-    flex: 1,
-    backgroundColor: C.overlayCalendario,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 24,
-  },
-  calCartao: {
-    width: '100%',
-    maxWidth: 360,
-    backgroundColor: C.branco,
-    borderRadius: 20,
-    padding: 16,
-  },
-  calCabecalho: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 12,
-  },
-  calMes: { fontSize: 16, fontWeight: '700', color: C.azul },
-  calSemana: { flexDirection: 'row' },
-  calDiaSemana: {
-    width: '14.2857%',
-    textAlign: 'center',
-    fontSize: 12,
-    fontWeight: '600',
-    color: C.texto,
-    marginBottom: 6,
-  },
-  calCelula: {
-    width: '14.2857%',
-    aspectRatio: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  calDia: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  calDiaAtivo: { backgroundColor: C.azul },
-  calDiaTexto: { fontSize: 14, color: C.azul },
-  calDiaTextoDesativado: { color: C.placeholder, opacity: 0.5 },
-  calDiaTextoAtivo: { color: C.branco, fontWeight: '700' },
-  calRodape: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 12,
-    paddingHorizontal: 4,
-  },
-  calAcao: { fontSize: 14, fontWeight: '700', color: C.azul },
 
   statusLista: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   statusChip: {

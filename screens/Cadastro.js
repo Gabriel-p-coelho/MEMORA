@@ -10,6 +10,7 @@ export default function Cadastro({ navigation }) {
   const [confirmar, setConfirmar] = useState('');
   const [carregando, setCarregando] = useState(false);
 
+  // Valida as senhas e cria o usuário no Firebase Auth.
   function criarConta() {
     if (senha !== confirmar) {
       Alert.alert('Erro', 'As senhas não coincidem');

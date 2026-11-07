@@ -27,7 +27,5 @@ export const C = {
   divisorEscuro: '#6F7890',
 
   // Transparências
-  overlay: 'rgba(32,42,67,0.5)',
-  overlayCalendario: 'rgba(32, 42, 67, 0.45)',
   brancoVidro: 'rgba(255,255,255,0.7)',
 };

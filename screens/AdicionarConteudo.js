@@ -14,11 +14,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import firebase from '../config/config';
 import { vibrar } from '../components/Haptico';
+import { STATUS, CATEGORIAS, lerNota } from '../components/Obras';
 import {
-  STATUS,
-  CATEGORIAS,
   CampoTexto,
-  LinhaDeCampos,
   SeletorCategoria,
   SecaoImagem,
   SeletorStatus,
@@ -26,69 +24,92 @@ import {
 import { C } from '../components/Cores';
 
 export default function AdicionarConteudo({ navigation, route }) {
+  // Se a tela abriu com um id, é edição; senão, é uma obra nova.
   const editando = route.params?.id;
   const [categoria, setCategoria] = useState('Filme');
   const [status, setStatus] = useState('Planejado');
   const [valores, setValores] = useState({});
 
   const config = CATEGORIAS[categoria];
+  const statusPermitidos = config.status || STATUS;
 
-  // modo edição
+  const uid = firebase.auth().currentUser.uid;
+  const obras = firebase.database().ref('/usuarios/' + uid + '/obras');
+
+  // modo edição: carrega a obra e preenche o formulário
   useEffect(() => {
     if (!editando) return;
-    const uid = firebase.auth().currentUser.uid;
 
-    firebase
-      .database()
-      .ref('/usuarios/' + uid + '/obras/' + editando)
-      .once('value')
-      .then((snapshot) => {
-        const obra = snapshot.val();
-        if (!obra) return;
-        const { categoria: categ, status: stat, criadaEm, ...resto } = obra;
-        setCategoria(categ);
-        setStatus(stat);
-        setValores(resto);
-      });
+    obras.child(editando).once('value', (snapshot) => {
+      const obra = snapshot.val();
+      if (obra == null) return;
+      setCategoria(obra.categoria);
+      setStatus(obra.status);
+      setValores(obra);
+    });
   }, []);
 
-  const mudar = (chave, texto) => setValores((v) => ({ ...v, [chave]: texto }));
-  const fechar = () => navigation.goBack();
+  function mudar(chave, texto) {
+    setValores({ ...valores, [chave]: texto });
+  }
 
+  // Ao trocar de categoria, volta o status para 'Planejado' se ele não existir nela.
   function trocarCategoria(nome) {
     setCategoria(nome);
     const permitidos = CATEGORIAS[nome].status || STATUS;
     if (!permitidos.includes(status)) setStatus('Planejado');
   }
 
+  // Valida e salva: update se estiver editando (U do CRUD), push se for obra nova (C do CRUD).
   function salvar() {
     if (!valores.titulo) {
       Alert.alert('Erro', 'Digite o título');
       return;
     }
 
-    const uid = firebase.auth().currentUser.uid;
-    const obras = firebase.database().ref('/usuarios/' + uid + '/obras');
+    const nota = lerNota(valores.nota);
+    if (valores.nota && (isNaN(nota) || nota < 0 || nota > 5)) {
+      Alert.alert('Erro', 'A nota deve ser um valor de 0 a 5');
+      return;
+    }
+
+    const dados = {
+      ...valores,
+      categoria: categoria,
+      status: status,
+      // a data de conclusão é guardada automaticamente
+      concluidaEm: status === 'Concluído' ? valores.concluidaEm || Date.now() : null,
+    };
 
     if (editando) {
-      obras.child(editando).update({
-        ...valores,
-        categoria: categoria,
-        status: status,
-        atualizadaEm: Date.now(),
-      });
+      obras.child(editando).update({ ...dados, atualizadaEm: Date.now() });
       Alert.alert('Pronto!', 'Obra atualizada com sucesso!');
     } else {
-      obras.push({
-        ...valores,
-        categoria: categoria,
-        status: status,
-        criadaEm: Date.now(),
-      });
+      obras.push({ ...dados, criadaEm: Date.now() });
       Alert.alert('Pronto!', 'Obra salva com sucesso!');
     }
     vibrar();
-    fechar();
+    navigation.goBack();
+  }
+
+  // Mostra as linhas de campos; os campos de cada linha dividem a largura.
+  function mostrarCampos(linhas) {
+    return linhas.map((linha, i) => (
+      <View key={i} style={s.linha}>
+        {linha.map((campo) => (
+          <CampoTexto
+            key={campo.chave}
+            style={s.campo}
+            rotulo={campo.rotulo}
+            valor={valores[campo.chave] || ''}
+            onChange={(texto) => mudar(campo.chave, texto)}
+            dica={campo.dica}
+            teclado={campo.teclado}
+            maxLength={campo.maxLength}
+          />
+        ))}
+      </View>
+    ));
   }
 
   return (
@@ -97,10 +118,7 @@ export default function AdicionarConteudo({ navigation, route }) {
         style={s.tela}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <View style={s.cabecalho}>
-          <Pressable
-            onPress={fechar}
-            hitSlop={10}
-            style={s.voltar}>
+          <Pressable onPress={() => navigation.goBack()} hitSlop={10} style={s.voltar}>
             <Ionicons name="chevron-back" size={26} color={C.azul} />
           </Pressable>
           <Text style={s.titulo}>
@@ -113,47 +131,30 @@ export default function AdicionarConteudo({ navigation, route }) {
           contentContainerStyle={s.conteudo}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled">
-          <SeletorCategoria
-            selecionada={categoria}
-            onSelecionar={trocarCategoria}
-          />
+          <SeletorCategoria selecionada={categoria} onSelecionar={trocarCategoria} />
 
           <SecaoImagem categoria={categoria} />
 
           <CampoTexto
-            rotulo={config.titulo}
+            rotulo={config.titulo || 'Título'}
             valor={valores.titulo || ''}
-            onChange={(t) => mudar('titulo', t)}
+            onChange={(texto) => mudar('titulo', texto)}
           />
 
-          {config.linhas.map((campos, i) => (
-            <LinhaDeCampos
-              key={`a${i}`}
-              campos={campos}
-              valores={valores}
-              onChange={mudar}
-            />
-          ))}
+          {mostrarCampos(config.campos)}
 
           <SeletorStatus
             selecionado={status}
             onSelecionar={setStatus}
-            lista={config.status || STATUS}
+            lista={statusPermitidos}
           />
 
-          {config.linhasFinais.map((campos, i) => (
-            <LinhaDeCampos
-              key={`b${i}`}
-              campos={campos}
-              valores={valores}
-              onChange={mudar}
-            />
-          ))}
+          {mostrarCampos(config.progresso)}
 
           <CampoTexto
             rotulo="Opinião"
             valor={valores.opiniao || ''}
-            onChange={(t) => mudar('opiniao', t)}
+            onChange={(texto) => mudar('opiniao', texto)}
             dica="Ex.: Muito bom!"
           />
         </ScrollView>
@@ -161,7 +162,7 @@ export default function AdicionarConteudo({ navigation, route }) {
         <View style={s.rodape}>
           <TouchableOpacity
             style={[s.botaoRodape, s.botaoCancelar]}
-            onPress={fechar}
+            onPress={() => navigation.goBack()}
             activeOpacity={0.8}>
             <Text style={s.botaoCancelarTexto}>Cancelar</Text>
           </TouchableOpacity>
@@ -169,7 +170,9 @@ export default function AdicionarConteudo({ navigation, route }) {
             style={[s.botaoRodape, s.botaoSalvar]}
             onPress={salvar}
             activeOpacity={0.8}>
-            <Text style={s.botaoSalvarTexto}>{editando ? 'Salvar alterações' : 'Salvar na biblioteca'}</Text>
+            <Text style={s.botaoSalvarTexto}>
+              {editando ? 'Salvar alterações' : 'Salvar na biblioteca'}
+            </Text>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -177,10 +180,11 @@ export default function AdicionarConteudo({ navigation, route }) {
   );
 }
 
-//Estilos
 const s = StyleSheet.create({
   tela: { flex: 1, backgroundColor: C.fundo },
   scroll: { flex: 1 },
+  linha: { flexDirection: 'row', gap: 12 },
+  campo: { flex: 1 },
   conteudo: {
     paddingHorizontal: 22,
     paddingTop: 8,

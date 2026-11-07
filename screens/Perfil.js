@@ -5,17 +5,10 @@ import { CommonActions } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import firebase from '../config/config';
 import { vibrar } from '../components/Haptico';
-import { mediaDasNotas } from '../components/Obras';
+import { CATEGORIAS, lerObras, mediaDasNotas } from '../components/Obras';
 import { C } from '../components/Cores';
 
-const JORNADA = [
-  { categoria: 'Livro', rotulo: 'livros' },
-  { categoria: 'Filme', rotulo: 'filmes' },
-  { categoria: 'Série', rotulo: 'séries' },
-  { categoria: 'Jogo', rotulo: 'jogos' },
-  { categoria: 'Álbum', rotulo: 'álbuns' },
-];
-
+// Mês em que a conta foi criada, para o texto 'Diário cultural desde ...'.
 function desdeQuando() {
   const user = firebase.auth().currentUser;
   const criada = user && user.metadata && user.metadata.creationTime;
@@ -27,6 +20,7 @@ function desdeQuando() {
   return 'Diário cultural desde ' + mes;
 }
 
+// Usa a parte do email antes do @ como nome.
 function nomeDoUsuario() {
   const user = firebase.auth().currentUser;
   const base = user && user.email ? user.email.split('@')[0] : 'Usuário';
@@ -37,23 +31,7 @@ export default function Perfil({ navigation }) {
   const [obras, setObras] = useState([]);
   const nome = nomeDoUsuario();
 
-  useEffect(() => {
-    const uid = firebase.auth().currentUser.uid;
-    const ref = firebase.database().ref('/usuarios/' + uid + '/obras');
-
-    const escutar = ref.on('value', (snapshot) => {
-      const data = snapshot.val();
-
-      if (data == null) {
-        setObras([]);
-        return;
-      }
-
-      setObras(Object.keys(data).map((id) => ({ ...data[id], id })));
-    });
-
-    return () => ref.off('value', escutar);
-  }, []);
+  useEffect(() => lerObras(setObras), []);
 
   const concluidas = obras.filter((obra) => obra.status === 'Concluído').length;
 
@@ -65,6 +43,7 @@ export default function Perfil({ navigation }) {
     { rotulo: 'Nota média', valor: media },
   ];
 
+  // Pede confirmação antes de sair da conta.
   function confirmarSaida() {
     Alert.alert('Sair da conta?', 'Você precisará entrar novamente para acessar seu diário.', [
       { text: 'Cancelar', style: 'cancel' },
@@ -72,6 +51,7 @@ export default function Perfil({ navigation }) {
     ]);
   }
 
+  // Faz logout no Firebase e volta para a tela de Login.
   function sair() {
     firebase
       .auth()
@@ -121,12 +101,12 @@ export default function Perfil({ navigation }) {
 
         <Text style={s.secao}>Sua jornada</Text>
         <View style={s.jornada}>
-          {JORNADA.map((item) => (
-            <Text key={item.categoria} style={s.jornadaItem}>
+          {Object.keys(CATEGORIAS).map((nome) => (
+            <Text key={nome} style={s.jornadaItem}>
               <Text style={s.jornadaNumero}>
-                {obras.filter((obra) => obra.categoria === item.categoria).length}
+                {obras.filter((obra) => obra.categoria === nome).length}
               </Text>{' '}
-              {item.rotulo}
+              {CATEGORIAS[nome].plural.toLowerCase()}
             </Text>
           ))}
         </View>

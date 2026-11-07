@@ -1,37 +1,29 @@
 import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import firebase from '../config/config';
-import { dataDaObra, mediaDasNotas } from '../components/Obras';
+import { CATEGORIAS, lerObras, dataDaObra, mediaDasNotas } from '../components/Obras';
 import { C } from '../components/Cores';
 
 const PERIODOS = ['Mês', 'Ano', 'Tudo'];
-
-const CATEGORIAS = [
-  { categoria: 'Livro', rotulo: 'Livros', cor: C.azul },
-  { categoria: 'Filme', rotulo: 'Filmes', cor: C.azulCartao },
-  { categoria: 'Série', rotulo: 'Séries', cor: C.menta },
-  { categoria: 'Jogo', rotulo: 'Jogos', cor: C.pessego },
-  { categoria: 'Álbum', rotulo: 'Álbuns', cor: C.cinza },
-];
-
 const MESES = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
+// Diz se a obra entra no período selecionado (Mês, Ano ou Tudo).
 function estaNoPeriodo(obra, periodo) {
   if (periodo === 'Tudo') return true;
-  const d = new Date(dataDaObra(obra));
+  const data = new Date(dataDaObra(obra));
   const agora = new Date();
-  if (d.getFullYear() !== agora.getFullYear()) return false;
-  return periodo === 'Ano' || d.getMonth() === agora.getMonth();
+  if (data.getFullYear() !== agora.getFullYear()) return false;
+  return periodo === 'Ano' || data.getMonth() === agora.getMonth();
 }
 
+// Dados do gráfico: por semana (Mês), por mês (Ano) ou por ano (Tudo).
 function montarAtividade(lista, periodo) {
   const datas = lista.map((obra) => new Date(dataDaObra(obra)));
 
   if (periodo === 'Mês') {
     const semanas = [0, 0, 0, 0];
-    datas.forEach((d) => {
-      semanas[Math.min(Math.floor((d.getDate() - 1) / 7), 3)]++;
+    datas.forEach((data) => {
+      semanas[Math.min(Math.floor((data.getDate() - 1) / 7), 3)]++;
     });
     return {
       titulo: 'Atividade por semana',
@@ -41,82 +33,63 @@ function montarAtividade(lista, periodo) {
 
   if (periodo === 'Ano') {
     const meses = MESES.map(() => 0);
-    datas.forEach((d) => meses[d.getMonth()]++);
+    datas.forEach((data) => meses[data.getMonth()]++);
     return {
       titulo: 'Atividade por mês',
       itens: meses.map((n, i) => ({ rotulo: MESES[i], valor: n })),
     };
   }
 
+  // Tudo: um item por ano (no máximo os 5 últimos)
   if (datas.length === 0) return { titulo: 'Atividade por ano', itens: [] };
-  const anos = datas.map((d) => d.getFullYear());
+  const anos = datas.map((data) => data.getFullYear());
   const fim = Math.max(...anos);
   const inicio = Math.max(Math.min(...anos), fim - 4);
   const itens = [];
   for (let ano = inicio; ano <= fim; ano++) {
     itens.push({ rotulo: String(ano), valor: anos.filter((a) => a === ano).length });
   }
-  return { titulo: 'Atividade por ano', itens: itens };
+  return { titulo: 'Atividade por ano', itens };
 }
 
 function CartaoNumero({ rotulo, valor, pequeno }) {
   return (
     <View style={s.cartaoNumero}>
       <Text style={s.cartaoRotulo}>{rotulo}</Text>
-      <Text style={[s.cartaoValor, pequeno && s.cartaoValorPequeno]}>
-        {valor}
-      </Text>
+      <Text style={[s.cartaoValor, pequeno && s.cartaoValorPequeno]}>{valor}</Text>
     </View>
   );
 }
 
+// Calcula os números a partir das obras do usuário, filtradas pelo período.
 export default function Estatisticas() {
   const [obras, setObras] = useState([]);
   const [periodo, setPeriodo] = useState('Mês');
 
-  useEffect(() => {
-    const uid = firebase.auth().currentUser.uid;
-    const ref = firebase.database().ref('/usuarios/' + uid + '/obras');
-
-    const escutar = ref.on('value', (snapshot) => {
-      const data = snapshot.val();
-
-      if (data == null) {
-        setObras([]);
-        return;
-      }
-
-      setObras(Object.keys(data).map((id) => ({ ...data[id], id: id })));
-    });
-
-    return () => ref.off('value', escutar);
-  }, []);
+  useEffect(() => lerObras(setObras), []);
 
   const lista = obras.filter((obra) => estaNoPeriodo(obra, periodo));
-
   const concluidas = lista.filter((obra) => obra.status === 'Concluído').length;
 
-  const media = mediaDasNotas(lista);
-
-  const contagens = CATEGORIAS.map((item) => ({
-    ...item,
-    total: lista.filter((obra) => obra.categoria === item.categoria).length,
-  }));
-  const maiorCategoria = Math.max(...contagens.map((item) => item.total));
-  const maisAtivo = maiorCategoria > 0
-    ? contagens.find((item) => item.total === maiorCategoria).rotulo
-    : '–';
+  // quantas obras de cada categoria + qual categoria tem mais
+  let maior = 0;
+  let maisAtivo = '–';
+  const contagens = Object.keys(CATEGORIAS).map((nome) => {
+    const total = lista.filter((obra) => obra.categoria === nome).length;
+    if (total > maior) {
+      maior = total;
+      maisAtivo = CATEGORIAS[nome].plural;
+    }
+    return { nome, total };
+  });
 
   const atividade = montarAtividade(lista, periodo);
   const maiorBarra = Math.max(1, ...atividade.itens.map((item) => item.valor));
-  const barraFina = atividade.itens.length > 6;
+  const barraFina = atividade.itens.length > 6; // 12 meses: barras mais finas
 
   return (
     <SafeAreaView style={s.tela}>
-      <ScrollView
-        contentContainerStyle={s.conteudo}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView contentContainerStyle={s.conteudo} showsVerticalScrollIndicator={false}>
         <Text style={s.titulo}>Estatísticas</Text>
 
         <View style={s.seletor}>
@@ -125,9 +98,7 @@ export default function Estatisticas() {
               key={nome}
               style={[s.opcao, periodo === nome && s.opcaoAtiva]}
               onPress={() => setPeriodo(nome)}
-              activeOpacity={0.8}
-              accessibilityState={{ selected: periodo === nome }}
-            >
+              activeOpacity={0.8}>
               <Text style={[s.opcaoTexto, periodo === nome && s.opcaoTextoAtivo]}>
                 {nome}
               </Text>
@@ -137,7 +108,7 @@ export default function Estatisticas() {
 
         <View style={s.linhaCartoes}>
           <CartaoNumero rotulo="Concluídas" valor={String(concluidas)} />
-          <CartaoNumero rotulo="Nota média" valor={media} />
+          <CartaoNumero rotulo="Nota média" valor={mediaDasNotas(lista)} />
           <CartaoNumero rotulo="Mais ativo" valor={maisAtivo} pequeno />
         </View>
 
@@ -145,15 +116,15 @@ export default function Estatisticas() {
           <Text style={s.blocoTitulo}>Por categoria</Text>
 
           {contagens.map((item) => (
-            <View key={item.categoria} style={s.linhaCategoria}>
-              <Text style={s.categoriaNome}>{item.rotulo}</Text>
+            <View key={item.nome} style={s.linhaCategoria}>
+              <Text style={s.categoriaNome}>{CATEGORIAS[item.nome].plural}</Text>
               <View style={s.trilho}>
                 <View
                   style={[
                     s.preenchimento,
                     {
-                      width: maiorCategoria > 0 ? `${(item.total / maiorCategoria) * 100}%` : '0%',
-                      backgroundColor: item.cor,
+                      width: maior > 0 ? `${(item.total / maior) * 100}%` : '0%',
+                      backgroundColor: CATEGORIAS[item.nome].cor,
                     },
                   ]}
                 />

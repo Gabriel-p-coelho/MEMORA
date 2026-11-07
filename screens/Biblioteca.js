@@ -9,90 +9,50 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import firebase from '../config/config';
-import { PLURAL } from '../components/Obras';
+import { CATEGORIAS, STATUS, lerObras } from '../components/Obras';
 import { C } from '../components/Cores';
 
-const TIPOS = ['Todos', 'Filmes', 'Séries', 'Livros', 'Jogos', 'Álbuns'];
+const TIPOS = ['Todos', ...Object.keys(CATEGORIAS)];
+const STATUS_FILTRO = ['Todos', ...STATUS];
 
-const STATUS = [
-  'Todos',
-  'Planejado',
-  'Em andamento',
-  'Concluído',
-  'Abandonado',
-];
-
-const COR_DO_TIPO = {
-  Filmes: C.azulCartao,
-  Séries: C.menta,
-  Livros: C.pessego,
-  Jogos: C.lavanda,
-  Álbuns: C.borda,
+const COR_DO_STATUS = {
+  Concluído: C.menta,
+  Planejado: C.pessego,
+  Abandonado: C.borda,
 };
 
-const ICONES_TIPO = {
-  Filmes: 'film-outline',
-  Séries: 'tv-outline',
-  Livros: 'book-outline',
-  Jogos: 'game-controller-outline',
-  Álbuns: 'musical-notes-outline',
-};
-
-function corDoStatus(status) {
-  switch (status) {
-    case 'Concluído':
-      return C.menta;
-    case 'Planejado':
-      return C.pessego;
-    case 'Abandonado':
-      return C.borda;
-    default:
-      return C.lavanda;
-  }
-}
-
-function FiltroChip({ titulo, selecionado, onPress, icone, compacto }) {
+function FiltroChip({ titulo, selecionado, onPress, icone }) {
   return (
     <TouchableOpacity
-      style={[
-        s.chip,
-        compacto && s.chipCompacto,
-        selecionado && s.chipAtivo,
-      ]}
+      style={[s.chip, selecionado && s.chipAtivo]}
       onPress={onPress}
       activeOpacity={0.75}>
       {icone ? (
         <Ionicons
           name={icone}
-          size={compacto ? 14 : 16}
+          size={16}
           color={selecionado ? C.branco : C.azul}
           style={s.chipIcone}
         />
       ) : null}
 
-      <Text
-        style={[
-          s.chipTexto,
-          compacto && s.chipTextoCompacto,
-          selecionado && s.chipTextoAtivo,
-        ]}>
-        {titulo}
-      </Text>
+      <Text style={[s.chipTexto, selecionado && s.chipTextoAtivo]}>{titulo}</Text>
     </TouchableOpacity>
   );
 }
 
+// Cartão de uma obra na grade da biblioteca.
 function ObraCard({ obra, onAbrir }) {
-  const corIcone = obra.cor === C.azulCartao ? C.branco : C.azul;
+  const categoria = CATEGORIAS[obra.categoria];
 
   return (
-    <TouchableOpacity
-      style={s.obraCard}
-      activeOpacity={0.8}
-      onPress={onAbrir}>
-      <View style={[s.capaObra, { backgroundColor: obra.cor }]}>
-        <Ionicons name={obra.icone} size={32} color={corIcone} />
+    <TouchableOpacity style={s.obraCard} activeOpacity={0.8} onPress={onAbrir}>
+      <View style={[s.capaObra, { backgroundColor: categoria.cor }]}>
+        <Ionicons
+          name={categoria.icone}
+          size={32}
+          color={categoria.cor === C.azulCartao ? C.branco : C.azul}
+        />
       </View>
 
       <Text style={s.obraTitulo} numberOfLines={1}>
@@ -103,14 +63,12 @@ function ObraCard({ obra, onAbrir }) {
         <View
           style={[
             s.statusPill,
-            { backgroundColor: corDoStatus(obra.status) },
+            { backgroundColor: COR_DO_STATUS[obra.status] || C.lavanda },
           ]}>
           <Text style={s.statusTexto}>{obra.status}</Text>
         </View>
 
-        {obra.avaliacao ? (
-          <Text style={s.avaliacao}>★ {obra.avaliacao}</Text>
-        ) : null}
+        {obra.nota ? <Text style={s.avaliacao}>★ {obra.nota}</Text> : null}
       </View>
     </TouchableOpacity>
   );
@@ -119,51 +77,20 @@ function ObraCard({ obra, onAbrir }) {
 export default function Biblioteca({ navigation }) {
   const [obras, setObras] = useState([]);
   const [busca, setBusca] = useState('');
-  const [tipoSelecionado, setTipoSelecionado] = useState('Todos');
-  const [statusSelecionado, setStatusSelecionado] = useState('Todos');
+  const [tipo, setTipo] = useState('Todos');
+  const [status, setStatus] = useState('Todos');
 
   useEffect(() => {
-    const uid = firebase.auth().currentUser.uid;
-    const ref = firebase.database().ref('/usuarios/' + uid + '/obras');
-
-    const escutar = ref.on('value', (snapshot) => {
-      const data = snapshot.val();
-
-      if (data == null) {
-        setObras([]);
-        return;
-      }
-
-      const lista = Object.keys(data).map((id) => {
-        const tipo = PLURAL[data[id].categoria];
-        return {
-          ...data[id],
-          id: id,
-          tipo: tipo,
-          cor: COR_DO_TIPO[tipo],
-          icone: ICONES_TIPO[tipo],
-          avaliacao: data[id].nota,
-        };
-      });
-
-      setObras(lista.reverse()); // mais recentes primeiro
-    });
-
-    return () => ref.off('value', escutar);
+    // reverse(): mais recentes primeiro
+    return lerObras((lista) => setObras(lista.reverse()));
   }, []);
 
+  // Aplica a busca por título e os filtros de categoria e status.
   const obrasFiltradas = obras.filter((obra) => {
-    const correspondeBusca = obra.titulo
-      .toLowerCase()
-      .includes(busca.trim().toLowerCase());
-
-    const correspondeTipo =
-      tipoSelecionado === 'Todos' || obra.tipo === tipoSelecionado;
-
-    const correspondeStatus =
-      statusSelecionado === 'Todos' || obra.status === statusSelecionado;
-
-    return correspondeBusca && correspondeTipo && correspondeStatus;
+    const porBusca = obra.titulo.toLowerCase().includes(busca.trim().toLowerCase());
+    const porTipo = tipo === 'Todos' || obra.categoria === tipo;
+    const porStatus = status === 'Todos' || obra.status === status;
+    return porBusca && porTipo && porStatus;
   });
 
   const total = obrasFiltradas.length;
@@ -190,13 +117,10 @@ export default function Biblioteca({ navigation }) {
             onChangeText={setBusca}
             placeholder="Buscar por título"
             placeholderTextColor={C.texto}
-            returnKeyType="search"
           />
 
           {busca.length > 0 && (
-            <TouchableOpacity
-              onPress={() => setBusca('')}
-              hitSlop={10}>
+            <TouchableOpacity onPress={() => setBusca('')} hitSlop={10}>
               <Ionicons name="close-circle" size={20} color={C.texto} />
             </TouchableOpacity>
           )}
@@ -207,13 +131,13 @@ export default function Biblioteca({ navigation }) {
           showsHorizontalScrollIndicator={false}
           style={s.filtrosScroll}
           contentContainerStyle={s.filtros}>
-          {TIPOS.map((tipo) => (
+          {TIPOS.map((nome) => (
             <FiltroChip
-              key={tipo}
-              titulo={tipo}
-              icone={ICONES_TIPO[tipo]}
-              selecionado={tipoSelecionado === tipo}
-              onPress={() => setTipoSelecionado(tipo)}
+              key={nome}
+              titulo={nome === 'Todos' ? 'Todos' : CATEGORIAS[nome].plural}
+              icone={nome === 'Todos' ? undefined : CATEGORIAS[nome].icone}
+              selecionado={tipo === nome}
+              onPress={() => setTipo(nome)}
             />
           ))}
         </ScrollView>
@@ -223,14 +147,12 @@ export default function Biblioteca({ navigation }) {
           showsHorizontalScrollIndicator={false}
           style={s.filtrosScroll}
           contentContainerStyle={s.filtros}>
-          {STATUS.map((status) => (
+          {STATUS_FILTRO.map((nome) => (
             <FiltroChip
-              key={status}
-              compacto
-              titulo={status}
-              icone={status === 'Todos' ? 'checkmark' : undefined}
-              selecionado={statusSelecionado === status}
-              onPress={() => setStatusSelecionado(status)}
+              key={nome}
+              titulo={nome}
+              selecionado={status === nome}
+              onPress={() => setStatus(nome)}
             />
           ))}
         </ScrollView>
@@ -241,23 +163,15 @@ export default function Biblioteca({ navigation }) {
               <ObraCard
                 key={obra.id}
                 obra={obra}
-                onAbrir={() =>
-                  navigation.navigate('DetalhesObra', { id: obra.id })
-                }
+                onAbrir={() => navigation.navigate('DetalhesObra', { id: obra.id })}
               />
             ))}
           </View>
         ) : (
           <View style={s.semResultados}>
             <Ionicons name="search-outline" size={32} color={C.texto} />
-
-            <Text style={s.semResultadosTitulo}>
-              Nenhuma obra encontrada
-            </Text>
-
-            <Text style={s.semResultadosTexto}>
-              Tente mudar a busca ou os filtros.
-            </Text>
+            <Text style={s.semResultadosTitulo}>Nenhuma obra encontrada</Text>
+            <Text style={s.semResultadosTexto}>Tente mudar a busca ou os filtros.</Text>
           </View>
         )}
       </ScrollView>
@@ -338,11 +252,6 @@ const s = StyleSheet.create({
     paddingHorizontal: 16,
   },
 
-  chipCompacto: {
-    height: 34,
-    borderRadius: 17,
-    paddingHorizontal: 13,
-  },
 
   chipAtivo: {
     backgroundColor: C.azul,
@@ -358,9 +267,6 @@ const s = StyleSheet.create({
     fontSize: 14,
   },
 
-  chipTextoCompacto: {
-    fontSize: 13,
-  },
 
   chipTextoAtivo: {
     color: C.branco,

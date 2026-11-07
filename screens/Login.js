@@ -14,6 +14,7 @@ export default function Login({ navigation }) {
   const [senha, setSenha] = useState('');
   const [carregando, setCarregando] = useState(false);
 
+  // Entra com email e senha no Firebase Auth; se der certo, vai para as abas.
   function entrar() {
     const email = usuario.trim().toLowerCase();
     setCarregando(true);

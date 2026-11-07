@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
   Image,
-  Modal,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -11,17 +9,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import firebase from '../config/config';
-import { PLURAL, dataDaObra } from '../components/Obras';
+import { CATEGORIAS, lerObras, dataDaObra } from '../components/Obras';
 import { C } from '../components/Cores';
-
-const sombra = {
-  shadowColor: C.azul,
-  shadowOffset: { width: 0, height: 4 },
-  shadowOpacity: 0.2,
-  shadowRadius: 6,
-  elevation: 3,
-};
 
 const circulo = (tamanho) => ({
   width: tamanho,
@@ -32,6 +21,7 @@ const circulo = (tamanho) => ({
   justifyContent: 'center',
 });
 
+// Transforma uma data em 'hoje', 'ontem', 'há N dias'...
 function quandoFoi(tempo) {
   const hoje = new Date();
   hoje.setHours(0, 0, 0, 0);
@@ -45,80 +35,50 @@ function quandoFoi(tempo) {
   return dia.toLocaleDateString('pt-BR');
 }
 
+// Quantas obras foram concluídas neste mês e qual categoria teve mais.
 function resumoDoMes(obras) {
   const agora = new Date();
   const contagem = {};
   let concluidas = 0;
 
   obras.forEach((obra) => {
-    if (obra.status !== 'Concluído') return;
-    const d = new Date(dataDaObra(obra));
-    if (d.getMonth() !== agora.getMonth() || d.getFullYear() !== agora.getFullYear()) return;
-    concluidas++;
-    contagem[obra.categoria] = (contagem[obra.categoria] || 0) + 1;
+    const data = new Date(dataDaObra(obra));
+    const esteMes =
+      data.getMonth() === agora.getMonth() && data.getFullYear() === agora.getFullYear();
+
+    if (obra.status === 'Concluído' && esteMes) {
+      concluidas++;
+      contagem[obra.categoria] = (contagem[obra.categoria] || 0) + 1;
+    }
   });
 
-  const [top] = Object.keys(contagem).sort((a, b) => contagem[b] - contagem[a]);
-  return { concluidas, maisAtivo: top ? PLURAL[top] : null };
+  let maisAtivo = null;
+  for (const categoria in contagem) {
+    if (!maisAtivo || contagem[categoria] > contagem[maisAtivo]) maisAtivo = categoria;
+  }
+
+  return { concluidas, maisAtivo: maisAtivo ? CATEGORIAS[maisAtivo].plural : null };
 }
 
-function montarAtividades(obras) {
-  const lista = obras.map((obra) => {
-    if (obra.status === 'Concluído') {
-      const tempo = dataDaObra(obra);
-      const nota = obra.nota ? 'Nota ' + obra.nota + ' · ' : '';
-      return {
-        id: obra.id,
-        tempo,
-        icone: 'checkmark',
-        verde: true,
-        titulo: 'Concluiu ' + obra.titulo,
-        descricao: nota + quandoFoi(tempo),
-      };
-    }
-
-    if (obra.atualizadaEm) {
-      let detalhe = obra.status;
-      if (obra.categoria === 'Livro' && obra.paginasLidas) {
-        detalhe = 'Página ' + obra.paginasLidas;
-      }
-      return {
-        id: obra.id,
-        tempo: obra.atualizadaEm,
-        icone: 'pencil-outline',
-        titulo: 'Atualizou ' + obra.titulo,
-        descricao: detalhe + ' · ' + quandoFoi(obra.atualizadaEm),
-      };
-    }
-
-    return {
-      id: obra.id,
-      tempo: obra.criadaEm || 0,
-      icone: 'add',
-      titulo: 'Adicionou ' + obra.titulo,
-      descricao: obra.categoria + ' · ' + quandoFoi(obra.criadaEm || 0),
-    };
-  });
-
-  return lista.sort((a, b) => b.tempo - a.tempo).slice(0, 4);
+// O que cada obra "fez" por último: concluiu, atualizou ou foi adicionada.
+function ultimaAtividade(obra) {
+  if (obra.status === 'Concluído') {
+    return { obra, verbo: 'Concluiu', icone: 'checkmark', tempo: dataDaObra(obra) };
+  }
+  if (obra.atualizadaEm) {
+    return { obra, verbo: 'Atualizou', icone: 'pencil-outline', tempo: obra.atualizadaEm };
+  }
+  return { obra, verbo: 'Adicionou', icone: 'add', tempo: obra.criadaEm || 0 };
 }
 
-const VARIANTES = {
-  escuro: { fundo: C.azul, texto: C.branco },
-  claro: { fundo: C.branco, texto: C.azul },
-  lavanda: { fundo: C.lavanda, texto: C.azul },
-};
-
-function Botao({ texto, icone, variante = 'escuro', tamanho = 14, style, ...props }) {
-  const v = VARIANTES[variante];
+// Botão da Home: escuro por padrão, claro com a propriedade 'claro'.
+function Botao({ texto, onPress, claro, style }) {
   return (
     <TouchableOpacity
-      style={[s.botao, { backgroundColor: v.fundo }, style]}
+      style={[s.botao, claro && s.botaoClaro, style]}
       activeOpacity={0.8}
-      {...props}
-    >
-      {icone && <Ionicons name={icone} size={18} color={v.texto} />}
-      <Text style={[s.botaoTexto, { color: v.texto, fontSize: tamanho }]}>{texto}</Text>
+      onPress={onPress}>
+      <Text style={[s.botaoTexto, claro && s.botaoTextoClaro]}>{texto}</Text>
     </TouchableOpacity>
   );
 }
@@ -185,12 +145,7 @@ function BibliotecaVazia({ onAdicionar }) {
         {'\n'}cada descoberta no Memora.
       </Text>
 
-      <Botao
-        texto="Adicionar primeira obra"
-        icone="add"
-        onPress={onAdicionar}
-        style={s.botaoLargo}
-      />
+      <Botao texto="Adicionar primeira obra" onPress={onAdicionar} style={s.botaoLargo} />
     </View>
   );
 }
@@ -208,28 +163,31 @@ function AtividadeRecente({ itens, onAbrir }) {
 
           <View style={s.atividadeTextos}>
             <Text style={s.atividadeTitulo}>Tudo pronto para começar</Text>
-            <Text style={s.atividadeDescricao}>
-              Suas atualizações aparecerão aqui.
-            </Text>
+            <Text style={s.atividadeDescricao}>Suas atualizações aparecerão aqui.</Text>
           </View>
         </View>
       ) : (
         itens.map((item) => (
           <TouchableOpacity
-            key={item.id}
+            key={item.obra.id}
             style={[s.atividadeLinha, s.atividadeItem]}
             activeOpacity={0.7}
-            onPress={() => onAbrir(item.id)}
-          >
-            <View style={[s.atividadeIcone, item.verde && { backgroundColor: C.menta }]}>
+            onPress={() => onAbrir(item.obra.id)}>
+            <View
+              style={[
+                s.atividadeIcone,
+                item.verbo === 'Concluiu' && { backgroundColor: C.menta },
+              ]}>
               <Ionicons name={item.icone} size={22} color={C.azul} />
             </View>
 
             <View style={s.atividadeTextos}>
               <Text style={s.atividadeTitulo} numberOfLines={1}>
-                {item.titulo}
+                {item.verbo} {item.obra.titulo}
               </Text>
-              <Text style={s.atividadeDescricao}>{item.descricao}</Text>
+              <Text style={s.atividadeDescricao}>
+                {item.obra.categoria} · {quandoFoi(item.tempo)}
+              </Text>
             </View>
           </TouchableOpacity>
         ))
@@ -238,66 +196,14 @@ function AtividadeRecente({ itens, onAbrir }) {
   );
 }
 
-function ModalProgresso({ visivel, obras, onFechar, onEscolher }) {
-  return (
-    <Modal visible={visivel} transparent animationType="fade" onRequestClose={onFechar}>
-      <Pressable style={s.modalFundo} onPress={onFechar}>
-        <Pressable style={s.modalCartao} onPress={() => {}}>
-          <Text style={s.modalTitulo}>Registrar progresso</Text>
-
-          {obras.length === 0 ? (
-            <Text style={s.modalTexto}>
-              Nenhuma obra em andamento. Mude o status de uma obra para "Em
-              andamento" para registrar o progresso aqui.
-            </Text>
-          ) : (
-            <ScrollView style={{ maxHeight: 280 }}>
-              {obras.map((obra) => (
-                <TouchableOpacity
-                  key={obra.id}
-                  style={s.modalLinha}
-                  activeOpacity={0.7}
-                  onPress={() => onEscolher(obra.id)}
-                >
-                  <View style={{ flex: 1 }}>
-                    <Text style={s.atividadeTitulo} numberOfLines={1}>
-                      {obra.titulo}
-                    </Text>
-                    <Text style={s.atividadeDescricao}>{obra.categoria}</Text>
-                  </View>
-                  <Ionicons name="chevron-forward" size={20} color={C.azul} />
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          )}
-
-          <Botao
-            texto="Fechar"
-            variante="lavanda"
-            tamanho={15}
-            onPress={onFechar}
-            style={s.modalFechar}
-          />
-        </Pressable>
-      </Pressable>
-    </Modal>
-  );
-}
-
+// Tela inicial: resumo do mês, botões de ação e atividade recente.
 export default function HomeScreen({ navigation }) {
-  const [obras, setObras] = useState(null);
+  const [obras, setObras] = useState(null); // null = ainda carregando
   const [progressoAberto, setProgressoAberto] = useState(false);
 
-  useEffect(() => {
-    const uid = firebase.auth().currentUser.uid;
-    const ref = firebase.database().ref('/usuarios/' + uid + '/obras');
-    const escutar = ref.on('value', (snap) => {
-      setObras(Object.entries(snap.val() ?? {}).map(([id, obra]) => ({ ...obra, id })));
-    });
+  useEffect(() => lerObras(setObras), []);
 
-    return () => ref.off('value', escutar);
-  }, []);
-
+  const emAndamento = obras ? obras.filter((obra) => obra.status === 'Em andamento') : [];
   const novaObra = () => navigation.navigate('AdicionarConteudo');
   const abrirObra = (id) => navigation.navigate('DetalhesObra', { id });
 
@@ -306,8 +212,7 @@ export default function HomeScreen({ navigation }) {
       <ScrollView
         style={s.scroll}
         contentContainerStyle={s.conteudo}
-        showsVerticalScrollIndicator={false}
-      >
+        showsVerticalScrollIndicator={false}>
         <Logo />
         <Text style={s.slogan}>Sua história, em cada descoberta</Text>
 
@@ -319,30 +224,51 @@ export default function HomeScreen({ navigation }) {
               <BibliotecaVazia onAdicionar={novaObra} />
             ) : (
               <View style={s.botoes}>
-                <Botao
-                  texto="+ Nova obra"
-                  onPress={novaObra}
-                  style={s.botaoHome}
-                />
+                <Botao texto="+ Nova obra" onPress={novaObra} style={s.botaoHome} />
                 <Botao
                   texto="Registrar Progresso"
-                  variante="claro"
-                  onPress={() => setProgressoAberto(true)}
+                  claro
+                  onPress={() => setProgressoAberto(!progressoAberto)}
                   style={s.botaoHome}
                 />
               </View>
             )}
 
-            <AtividadeRecente itens={montarAtividades(obras)} onAbrir={abrirObra} />
+            {progressoAberto && (
+              <View style={s.progresso}>
+                <Text style={s.progressoTitulo}>Registrar progresso</Text>
 
-            <ModalProgresso
-              visivel={progressoAberto}
-              obras={obras.filter((obra) => obra.status === 'Em andamento')}
-              onFechar={() => setProgressoAberto(false)}
-              onEscolher={(id) => {
-                setProgressoAberto(false);
-                navigation.navigate('AdicionarConteudo', { id });
-              }}
+                {emAndamento.length === 0 ? (
+                  <Text style={s.progressoTexto}>
+                    Nenhuma obra em andamento. Mude o status de uma obra para "Em
+                    andamento" para registrar o progresso aqui.
+                  </Text>
+                ) : (
+                  emAndamento.map((obra) => (
+                      <TouchableOpacity
+                        key={obra.id}
+                        style={s.progressoLinha}
+                        activeOpacity={0.7}
+                        onPress={() => navigation.navigate('AdicionarConteudo', { id: obra.id })}>
+                        <View style={{ flex: 1 }}>
+                          <Text style={s.atividadeTitulo} numberOfLines={1}>
+                            {obra.titulo}
+                          </Text>
+                          <Text style={s.atividadeDescricao}>{obra.categoria}</Text>
+                        </View>
+                        <Ionicons name="chevron-forward" size={20} color={C.azul} />
+                      </TouchableOpacity>
+                    ))
+                )}
+              </View>
+            )}
+
+            <AtividadeRecente
+              itens={obras
+                .map(ultimaAtividade)
+                .sort((a, b) => b.tempo - a.tempo)
+                .slice(0, 4)}
+              onAbrir={abrirObra}
             />
           </>
         )}
@@ -358,15 +284,23 @@ const s = StyleSheet.create({
   botao: {
     height: 48,
     borderRadius: 14,
-    flexDirection: 'row',
+    backgroundColor: C.azul,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
   },
-  botaoTexto: { fontWeight: '600' },
+  botaoClaro: { backgroundColor: C.branco },
+  botaoTexto: { fontSize: 14, fontWeight: '600', color: C.branco },
+  botaoTextoClaro: { color: C.azul },
   botaoLargo: { width: '100%', marginTop: 16 },
   botoes: { flexDirection: 'row', gap: 12, marginTop: 20 },
-  botaoHome: { flex: 1, ...sombra },
+  botaoHome: {
+    flex: 1,
+    shadowColor: C.azul,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 3,
+  },
   logoLinha: { height: 56, flexDirection: 'row', alignItems: 'center' },
   logoImagem: { width: 56, height: 56, marginRight: 8 },
   logoTexto: { fontSize: 40, fontWeight: '400', letterSpacing: -1.5, color: C.azul },
@@ -430,28 +364,19 @@ const s = StyleSheet.create({
   atividadeTitulo: { fontSize: 14, fontWeight: '600', color: C.azul },
   atividadeDescricao: { fontSize: 13, color: C.texto, marginTop: 4 },
 
-  modalFundo: {
-    flex: 1,
-    backgroundColor: C.overlay,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 24,
-  },
-  modalCartao: {
-    width: '100%',
-    maxWidth: 360,
+  progresso: {
     backgroundColor: C.branco,
     borderRadius: 20,
     padding: 20,
+    marginTop: 20,
   },
-  modalTitulo: { fontSize: 18, fontWeight: '800', color: C.azul, marginBottom: 8 },
-  modalTexto: { fontSize: 14, lineHeight: 20, color: C.texto },
-  modalLinha: {
+  progressoTitulo: { fontSize: 18, fontWeight: '800', color: C.azul, marginBottom: 8 },
+  progressoTexto: { fontSize: 14, lineHeight: 20, color: C.texto },
+  progressoLinha: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: C.lavanda,
   },
-  modalFechar: { marginTop: 16 },
 });
