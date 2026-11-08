@@ -16,6 +16,12 @@ import firebase from '../config/config';
 import { vibrar } from '../components/Haptico';
 import { STATUS, CATEGORIAS, lerNota } from '../components/Obras';
 import {
+  caminhoDaImagem,
+  escolherImagem,
+  salvarImagem,
+  apagarImagem,
+} from '../components/Imagens';
+import {
   CampoTexto,
   SeletorCategoria,
   SecaoImagem,
@@ -29,6 +35,8 @@ export default function AdicionarConteudo({ navigation, route }) {
   const [categoria, setCategoria] = useState('Filme');
   const [status, setStatus] = useState('Planejado');
   const [valores, setValores] = useState({});
+  const [imagemNova, setImagemNova] = useState(null); // imagem escolhida agora (uri temporária)
+  const [salvando, setSalvando] = useState(false);
 
   const config = CATEGORIAS[categoria];
   const statusPermitidos = config.status || STATUS;
@@ -60,8 +68,16 @@ export default function AdicionarConteudo({ navigation, route }) {
     if (!permitidos.includes(status)) setStatus('Planejado');
   }
 
-  // Valida e salva: update se estiver editando (U do CRUD), push se for obra nova (C do CRUD).
-  function salvar() {
+  async function escolher(origem) {
+    const uri = await escolherImagem(origem);
+    if (uri) setImagemNova(uri);
+  }
+
+  // Valida e salva: update se estiver editando (U do CRUD), set com id novo se for obra nova (C do CRUD).
+  // A imagem é copiada para o aparelho ANTES de gravar no banco; se a cópia falhar, a obra não é salva.
+  async function salvar() {
+    if (salvando) return;
+
     if (!valores.titulo) {
       Alert.alert('Erro', 'Digite o título');
       return;
@@ -73,21 +89,48 @@ export default function AdicionarConteudo({ navigation, route }) {
       return;
     }
 
+    setSalvando(true);
+
+    // push() sem argumento só gera o id (nada é gravado ainda)
+    const id = editando || obras.push().key;
+    const imagemAntiga = valores.imageName;
+    let imageName = imagemAntiga || null;
+
+    if (imagemNova) {
+      try {
+        imageName = await salvarImagem(imagemNova, id);
+      } catch (erro) {
+        setSalvando(false);
+        Alert.alert('Erro', 'Não foi possível salvar a imagem. A obra não foi salva.');
+        return;
+      }
+    }
+
     const dados = {
       ...valores,
       categoria: categoria,
       status: status,
+      imageName: imageName,
       // a data de conclusão é guardada automaticamente
       concluidaEm: status === 'Concluído' ? valores.concluidaEm || Date.now() : null,
     };
 
-    if (editando) {
-      obras.child(editando).update({ ...dados, atualizadaEm: Date.now() });
-      Alert.alert('Pronto!', 'Obra atualizada com sucesso!');
-    } else {
-      obras.push({ ...dados, criadaEm: Date.now() });
-      Alert.alert('Pronto!', 'Obra salva com sucesso!');
-    }
+    const gravacao = editando
+      ? obras.child(id).update({ ...dados, atualizadaEm: Date.now() })
+      : obras.child(id).set({ ...dados, criadaEm: Date.now() });
+
+    gravacao
+      .then(() => {
+        // só apaga a imagem antiga depois que o banco já aceitou a nova
+        if (imagemNova) apagarImagem(imagemAntiga);
+      })
+      .catch(() => {
+        // o banco recusou: desfaz a cópia para não sobrar arquivo órfão
+        if (imagemNova) apagarImagem(imageName);
+        Alert.alert('Erro', 'Não foi possível salvar a obra. Tente novamente.');
+      });
+
+    Alert.alert('Pronto!', editando ? 'Obra atualizada com sucesso!' : 'Obra salva com sucesso!');
     vibrar();
     navigation.goBack();
   }
@@ -133,7 +176,12 @@ export default function AdicionarConteudo({ navigation, route }) {
           keyboardShouldPersistTaps="handled">
           <SeletorCategoria selecionada={categoria} onSelecionar={trocarCategoria} />
 
-          <SecaoImagem categoria={categoria} />
+          <SecaoImagem
+            categoria={categoria}
+            uri={imagemNova || caminhoDaImagem(valores.imageName)}
+            onGaleria={() => escolher('galeria')}
+            onCamera={() => escolher('camera')}
+          />
 
           <CampoTexto
             rotulo={config.titulo || 'Título'}
@@ -167,8 +215,9 @@ export default function AdicionarConteudo({ navigation, route }) {
             <Text style={s.botaoCancelarTexto}>Cancelar</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[s.botaoRodape, s.botaoSalvar]}
+            style={[s.botaoRodape, s.botaoSalvar, salvando && { opacity: 0.7 }]}
             onPress={salvar}
+            disabled={salvando}
             activeOpacity={0.8}>
             <Text style={s.botaoSalvarTexto}>
               {editando ? 'Salvar alterações' : 'Salvar na biblioteca'}

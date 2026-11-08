@@ -1,5 +1,6 @@
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { Capa } from './Imagens';
 import { CATEGORIAS, STATUS } from './Obras';
 import { C } from './Cores';
 
@@ -51,24 +52,31 @@ export function SeletorCategoria({ selecionada, onSelecionar }) {
   );
 }
 
-// Por enquanto só visual: os botões ainda não escolhem imagem.
-export function SecaoImagem({ categoria }) {
+// Prévia da imagem (uri) + botões para escolher na galeria ou tirar foto.
+// Escolher de novo substitui a imagem anterior.
+export function SecaoImagem({ categoria, uri, onGaleria, onCamera }) {
   const { imagem } = CATEGORIAS[categoria];
   return (
     <View>
       <Rotulo>{imagem} (opcional)</Rotulo>
       <View style={s.imagemLinha}>
-        <View style={s.imagemVazia}>
-          <Ionicons name="image-outline" size={24} color={C.azul} />
-          <Text style={s.imagemVaziaTexto}>Sem {imagem.toLowerCase()}</Text>
-        </View>
+        <Capa
+          uri={uri}
+          style={s.imagemPrevia}
+          fallback={
+            <View style={s.imagemVazia}>
+              <Ionicons name="image-outline" size={24} color={C.azul} />
+              <Text style={s.imagemVaziaTexto}>Sem {imagem.toLowerCase()}</Text>
+            </View>
+          }
+        />
 
         <View style={s.imagemBotoes}>
-          <TouchableOpacity style={s.botaoImagem} activeOpacity={0.8}>
+          <TouchableOpacity style={s.botaoImagem} onPress={onGaleria} activeOpacity={0.8}>
             <Ionicons name="image" size={16} color={C.azul} />
             <Text style={s.botaoImagemTexto}>Escolher da galeria</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={s.botaoImagem} activeOpacity={0.8}>
+          <TouchableOpacity style={s.botaoImagem} onPress={onCamera} activeOpacity={0.8}>
             <Ionicons name="camera" size={16} color={C.azul} />
             <Text style={s.botaoImagemTexto}>Tirar foto</Text>
           </TouchableOpacity>
@@ -124,8 +132,8 @@ const s = StyleSheet.create({
 
   imagemLinha: { flexDirection: 'row', gap: 12 },
   imagemVazia: {
-    width: 78,
-    height: 104,
+    width: 108,
+    height: 144,
     borderRadius: 14,
     borderWidth: 1.5,
     borderStyle: 'dashed',
@@ -135,6 +143,7 @@ const s = StyleSheet.create({
     gap: 6,
   },
   imagemVaziaTexto: { fontSize: 11, color: C.texto },
+  imagemPrevia: { width: 108, height: 144, borderRadius: 14 },
   imagemBotoes: { flex: 1, gap: 8 },
   botaoImagem: {
     flex: 1,

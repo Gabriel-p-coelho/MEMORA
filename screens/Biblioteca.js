@@ -11,6 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { CATEGORIAS, STATUS, lerObras } from '../components/Obras';
 import { C } from '../components/Cores';
+import { Capa } from '../components/Imagens';
 
 const TIPOS = ['Todos', ...Object.keys(CATEGORIAS)];
 const STATUS_FILTRO = ['Todos', ...STATUS];
@@ -47,13 +48,19 @@ function ObraCard({ obra, onAbrir }) {
 
   return (
     <TouchableOpacity style={s.obraCard} activeOpacity={0.8} onPress={onAbrir}>
-      <View style={[s.capaObra, { backgroundColor: categoria.cor }]}>
-        <Ionicons
-          name={categoria.icone}
-          size={32}
-          color={categoria.cor === C.azulCartao ? C.branco : C.azul}
-        />
-      </View>
+      <Capa
+        nome={obra.imageName}
+        style={s.capaObra}
+        fallback={
+          <View style={[s.capaObra, { backgroundColor: categoria.cor }]}>
+            <Ionicons
+              name={categoria.icone}
+              size={32}
+              color={categoria.cor === C.azulCartao ? C.branco : C.azul}
+            />
+          </View>
+        }
+      />
 
       <Text style={s.obraTitulo} numberOfLines={1}>
         {obra.titulo}
@@ -287,7 +294,7 @@ const s = StyleSheet.create({
 
   capaObra: {
     width: '100%',
-    aspectRatio: 175 / 150,
+    aspectRatio: 3 / 4, // formato retrato, igual ao recorte da imagem
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',

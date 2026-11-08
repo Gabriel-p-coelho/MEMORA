@@ -14,6 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import firebase from '../config/config';
 import { CATEGORIAS, lerNota } from '../components/Obras';
 import { vibrar } from '../components/Haptico';
+import { apagarImagem, Capa } from '../components/Imagens';
 import { C } from '../components/Cores';
 
 const ICONES_STATUS = {
@@ -69,13 +70,16 @@ export default function DetalhesObra({ navigation, route }) {
     return () => ref.off('value', escutar);
   }, [caminho]);
 
-  // Remove a obra do Realtime Database (D do CRUD).
+  // Remove a obra do Realtime Database (D do CRUD) e a imagem dela do aparelho.
   function excluir() {
+    const imagem = obra.imageName;
+
     firebase
       .database()
       .ref(caminho)
       .remove()
       .then(() => {
+        apagarImagem(imagem);
         vibrar();
         navigation.goBack();
       })
@@ -140,9 +144,15 @@ export default function DetalhesObra({ navigation, route }) {
         </View>
 
         <View style={s.capa}>
-          <View style={s.capaInterna}>
-            <Ionicons name={config ? config.icone : 'albums-outline'} size={36} color={C.azul} />
-          </View>
+          <Capa
+            nome={obra.imageName}
+            style={s.capaImagem}
+            fallback={
+              <View style={s.capaInterna}>
+                <Ionicons name={config ? config.icone : 'albums-outline'} size={36} color={C.azul} />
+              </View>
+            }
+          />
         </View>
 
         <View style={s.conteudo}>
@@ -228,9 +238,9 @@ const s = StyleSheet.create({
 
   capa: {
     alignSelf: 'center',
-    marginTop: -150,
-    width: 128,
-    height: 184,
+    marginTop: -170,
+    width: 164,
+    height: 236,
     padding: 6,
     borderRadius: 14,
     backgroundColor: C.branco,
@@ -240,6 +250,7 @@ const s = StyleSheet.create({
     shadowRadius: 12,
     elevation: 8,
   },
+  capaImagem: { flex: 1, borderRadius: 8 },
   capaInterna: {
     flex: 1,
     borderRadius: 8,
