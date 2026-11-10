@@ -78,8 +78,7 @@ export function BotaoPrincipal({ titulo, onPress, carregando }) {
 export function TelaAuth({ children }) {
   return (
     <View style={s.tela}>
-      <View pointerEvents="none" style={[s.blob, s.blobTopo]} />
-      <View pointerEvents="none" style={[s.blob, s.blobBase]} />
+
       <SafeAreaView style={{ flex: 1 }}>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
@@ -101,16 +100,6 @@ const s = StyleSheet.create({
   tela: { flex: 1, backgroundColor: C.fundo },
   scroll: { flexGrow: 1, paddingHorizontal: 28, paddingBottom: 32 },
   conteudo: { marginTop: 36 },
-  blob: {
-    position: 'absolute',
-    width: 340,
-    height: 340,
-    borderRadius: 170,
-    backgroundColor: C.lavanda,
-    opacity: 0.55,
-  },
-  blobTopo: { top: -190, left: -170 },
-  blobBase: { bottom: -190, right: -170 },
   logoWrap: { alignItems: 'center', marginTop: 40 },
   logoIcone: {
     width: 88,

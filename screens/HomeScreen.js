@@ -12,6 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { CATEGORIAS, lerObras, dataDaObra } from '../components/Obras';
 import { C } from '../components/Cores';
 
+//Estilo das atividades recentes
 const circulo = (tamanho) => ({
   width: tamanho,
   height: tamanho,

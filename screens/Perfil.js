@@ -8,28 +8,18 @@ import { vibrar } from '../components/Haptico';
 import { CATEGORIAS, lerObras, mediaDasNotas } from '../components/Obras';
 import { C } from '../components/Cores';
 
-// Mês em que a conta foi criada, para o texto 'Diário cultural desde ...'.
-function desdeQuando() {
-  const user = firebase.auth().currentUser;
-  const criada = user && user.metadata && user.metadata.creationTime;
-  if (!criada) return '';
-  const mes = new Date(criada).toLocaleDateString('pt-BR', {
-    month: 'long',
-    year: 'numeric',
-  });
-  return 'Diário cultural desde ' + mes;
-}
-
-// Usa a parte do email antes do @ como nome.
-function nomeDoUsuario() {
-  const user = firebase.auth().currentUser;
-  const base = user && user.email ? user.email.split('@')[0] : 'Usuário';
-  return base.charAt(0).toUpperCase() + base.slice(1);
-}
-
 export default function Perfil({ navigation }) {
+  // Dados da conta logada
+  const user = firebase.auth().currentUser;
+  const email = user ? user.email : 'usuario';
+  const base = email.split('@')[0];
+  const nome = base.charAt(0).toUpperCase() + base.slice(1);
+  const criada = user ? user.metadata.creationTime : null;
+  const desde = criada
+    ? 'Diário cultural desde ' +
+      new Date(criada).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
+    : '';
   const [obras, setObras] = useState([]);
-  const nome = nomeDoUsuario();
 
   useEffect(() => lerObras(setObras), []);
 
@@ -77,7 +67,7 @@ export default function Perfil({ navigation }) {
             <Text style={s.avatarLetra}>{nome.charAt(0)}</Text>
           </View>
           <Text style={s.nome}>{nome}</Text>
-          <Text style={s.desde}>{desdeQuando()}</Text>
+          <Text style={s.desde}>{desde}</Text>
         </View>
 
         <View style={s.resumo}>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+ import { useEffect, useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -191,32 +191,27 @@ const s = StyleSheet.create({
     flex: 1,
     backgroundColor: C.fundo,
   },
-
   conteudo: {
     paddingHorizontal: 20,
     paddingTop: 16,
     paddingBottom: 24,
   },
-
   tituloLinha: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 14,
   },
-
   tituloPagina: {
     fontSize: 26,
     fontWeight: '800',
     color: C.azul,
   },
-
   contagem: {
     fontSize: 12,
     fontWeight: '700',
     color: C.texto,
   },
-
   buscaContainer: {
     height: 48,
     borderRadius: 14,
@@ -228,7 +223,6 @@ const s = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 14,
   },
-
   campoBusca: {
     flex: 1,
     fontSize: 15,
@@ -236,17 +230,14 @@ const s = StyleSheet.create({
     marginLeft: 10,
     paddingVertical: 0,
   },
-
   filtrosScroll: {
     flexGrow: 0,
   },
-
   filtros: {
     gap: 8,
     paddingBottom: 14,
     alignItems: 'center',
   },
-
   chip: {
     height: 40,
     flexDirection: 'row',
@@ -258,28 +249,21 @@ const s = StyleSheet.create({
     backgroundColor: C.branco,
     paddingHorizontal: 16,
   },
-
-
   chipAtivo: {
     backgroundColor: C.azul,
     borderColor: C.azul,
   },
-
   chipIcone: {
     marginRight: 6,
   },
-
   chipTexto: {
     color: C.texto,
     fontSize: 14,
   },
-
-
   chipTextoAtivo: {
     color: C.branco,
     fontWeight: '600',
   },
-
   grade: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -287,11 +271,9 @@ const s = StyleSheet.create({
     rowGap: 16,
     marginTop: 2,
   },
-
   obraCard: {
     width: '48%',
   },
-
   capaObra: {
     width: '100%',
     aspectRatio: 3 / 4, // formato retrato, igual ao recorte da imagem
@@ -299,7 +281,6 @@ const s = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-
   obraTitulo: {
     color: C.azul,
     fontSize: 14,
@@ -307,45 +288,38 @@ const s = StyleSheet.create({
     marginTop: 8,
     marginBottom: 4,
   },
-
   metaLinha: {
     flexDirection: 'row',
     alignItems: 'center',
     flexWrap: 'wrap',
     gap: 6,
   },
-
   statusPill: {
     height: 19,
     borderRadius: 10,
     paddingHorizontal: 8,
     justifyContent: 'center',
   },
-
   statusTexto: {
     color: C.azul,
     fontSize: 11,
     fontWeight: '500',
   },
-
   avaliacao: {
     fontSize: 12,
     color: C.texto,
   },
-
   semResultados: {
     alignItems: 'center',
     paddingVertical: 40,
     paddingHorizontal: 10,
   },
-
   semResultadosTitulo: {
     color: C.azul,
     fontWeight: '700',
     fontSize: 17,
     marginTop: 10,
   },
-
   semResultadosTexto: {
     color: C.texto,
     fontSize: 14,

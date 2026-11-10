@@ -72,16 +72,19 @@ export default function Estatisticas() {
   const concluidas = lista.filter((obra) => obra.status === 'Concluído').length;
 
   // quantas obras de cada categoria + qual categoria tem mais
+  const contagens = Object.keys(CATEGORIAS).map((nome) => ({
+    nome,
+    total: lista.filter((obra) => obra.categoria === nome).length,
+  }));
+
   let maior = 0;
   let maisAtivo = '–';
-  const contagens = Object.keys(CATEGORIAS).map((nome) => {
-    const total = lista.filter((obra) => obra.categoria === nome).length;
-    if (total > maior) {
-      maior = total;
-      maisAtivo = CATEGORIAS[nome].plural;
+  for (let i = 0; i < contagens.length; i++) {
+    if (contagens[i].total > maior) {
+      maior = contagens[i].total;
+      maisAtivo = CATEGORIAS[contagens[i].nome].plural;
     }
-    return { nome, total };
-  });
+  }
 
   const atividade = montarAtividade(lista, periodo);
   const maiorBarra = Math.max(1, ...atividade.itens.map((item) => item.valor));

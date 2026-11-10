@@ -6,7 +6,6 @@ import { View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import {
   SafeAreaProvider,
-  useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 
 import Login from './screens/Login';
@@ -39,7 +38,6 @@ const TelaVazia = () => null;
 
 // Navegação por abas (barra de baixo). O botão do meio abre a tela Adicionar.
 function Abas() {
-  const insets = useSafeAreaInsets();
 
   return (
     <Tab.Navigator
@@ -49,15 +47,8 @@ function Abas() {
         tabBarActiveTintColor: C.azul,
         tabBarInactiveTintColor: C.textoSuave,
         tabBarStyle: {
-          height: 64 + insets.bottom,
           backgroundColor: C.branco,
           borderTopColor: C.bordaClara,
-          paddingTop: 8,
-          paddingBottom: insets.bottom + 6,
-        },
-        tabBarLabelStyle: {
-          fontSize: 11,
-          fontWeight: '500',
         },
         tabBarIcon: ({ color, focused }) => {
           if (route.name === 'Adicionar') {

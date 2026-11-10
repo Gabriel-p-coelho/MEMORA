@@ -73,7 +73,7 @@ export default function AdicionarConteudo({ navigation, route }) {
     if (uri) setImagemNova(uri);
   }
 
-  // Valida e salva: update se estiver editando (U do CRUD), set com id novo se for obra nova (C do CRUD).
+  // Valida e salva: update se estiver editando, set com id novo se for obra nova.
   // A imagem é copiada para o aparelho ANTES de gravar no banco; se a cópia falhar, a obra não é salva.
   async function salvar() {
     if (salvando) return;
@@ -125,7 +125,7 @@ export default function AdicionarConteudo({ navigation, route }) {
         if (imagemNova) apagarImagem(imagemAntiga);
       })
       .catch(() => {
-        // o banco recusou: desfaz a cópia para não sobrar arquivo órfão
+        // o banco recusou: desfaz a cópia para não sobrar arquivo
         if (imagemNova) apagarImagem(imageName);
         Alert.alert('Erro', 'Não foi possível salvar a obra. Tente novamente.');
       });

@@ -70,7 +70,7 @@ export default function DetalhesObra({ navigation, route }) {
     return () => ref.off('value', escutar);
   }, [caminho]);
 
-  // Remove a obra do Realtime Database (D do CRUD) e a imagem dela do aparelho.
+  // Remove a obra do Realtime Database e a imagem dela do aparelho.
   function excluir() {
     const imagem = obra.imageName;
 
@@ -137,7 +137,6 @@ export default function DetalhesObra({ navigation, route }) {
         <View style={[s.topo, { height: 250 + insets.top }]}>
           <Pressable
             onPress={() => navigation.goBack()}
-            accessibilityLabel="Voltar"
             style={[s.voltar, { top: insets.top + 16 }]}>
             <Ionicons name="chevron-back" size={22} color={C.azul} />
           </Pressable>

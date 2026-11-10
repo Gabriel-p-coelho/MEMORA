@@ -91,7 +91,7 @@ export default function Diario({ navigation }) {
     <SafeAreaView style={s.tela}>
       <ScrollView contentContainerStyle={s.conteudo} showsVerticalScrollIndicator={false}>
         <View style={s.cabecalho}>
-          <Pressable onPress={() => navigation.goBack()} accessibilityLabel="Voltar" style={s.voltar}>
+          <Pressable onPress={() => navigation.goBack()} style={s.voltar}>
             <Ionicons name="arrow-back" size={24} color={C.azul} />
           </Pressable>
           <Text style={s.titulo}>Meu Diário</Text>
