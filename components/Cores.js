@@ -10,7 +10,6 @@ export const C = {
   // Destaques
   menta: '#8FE0CB',
   pessego: '#F6C4A8',
-  erro: '#C0392B',
 
   // Textos e cinzas
   texto: '#55607A',

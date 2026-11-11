@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { CATEGORIAS, lerObras, dataDaObra, mediaDasNotas } from '../components/Obras';
+import { CATEGORIAS, MESES, lerObras, dataDaObra, mediaDasNotas } from '../components/Obras';
 import { C } from '../components/Cores';
 
 const PERIODOS = ['Mês', 'Ano', 'Tudo'];
-const MESES = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-
 // Diz se a obra entra no período selecionado (Mês, Ano ou Tudo).
 function estaNoPeriodo(obra, periodo) {
   if (periodo === 'Tudo') return true;
@@ -172,9 +170,7 @@ export default function Estatisticas() {
 const s = StyleSheet.create({
   tela: { flex: 1, backgroundColor: C.fundo },
   conteudo: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 24, gap: 16 },
-
   titulo: { fontSize: 26, fontWeight: '800', color: C.azul, letterSpacing: -0.3 },
-
   seletor: {
     flexDirection: 'row',
     backgroundColor: C.lavanda,
@@ -191,7 +187,6 @@ const s = StyleSheet.create({
   opcaoAtiva: { backgroundColor: C.azul },
   opcaoTexto: { fontSize: 14, fontWeight: '500', color: C.azul },
   opcaoTextoAtivo: { fontWeight: '600', color: C.branco },
-
   linhaCartoes: { flexDirection: 'row', gap: 10 },
   cartaoNumero: {
     flex: 1,
@@ -204,7 +199,6 @@ const s = StyleSheet.create({
   cartaoRotulo: { fontSize: 12, color: C.texto },
   cartaoValor: { fontSize: 28, lineHeight: 28, fontWeight: '800', color: C.azul },
   cartaoValorPequeno: { fontSize: 20 },
-
   bloco: {
     backgroundColor: C.branco,
     borderRadius: 16,
@@ -212,7 +206,6 @@ const s = StyleSheet.create({
     gap: 12,
   },
   blocoTitulo: { fontSize: 14, fontWeight: '600', color: C.azul },
-
   linhaCategoria: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   categoriaNome: { width: 56, fontSize: 13, color: C.azul },
   trilho: {
@@ -224,7 +217,6 @@ const s = StyleSheet.create({
   },
   preenchimento: { height: 12, borderRadius: 6 },
   categoriaTotal: { width: 20, fontSize: 13, fontWeight: '600', color: C.azul, textAlign: 'right' },
-
   grafico: {
     flexDirection: 'row',
     alignItems: 'flex-end',
@@ -242,6 +234,5 @@ const s = StyleSheet.create({
   },
   barraFina: { width: 14 },
   barraRotulo: { fontSize: 11, color: C.texto, marginTop: 4 },
-
   vazio: { fontSize: 13, color: C.texto },
 });

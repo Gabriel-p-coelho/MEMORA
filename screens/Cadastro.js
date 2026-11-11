@@ -26,7 +26,7 @@ export default function Cadastro({ navigation }) {
       .then(() => {
         setCarregando(false);
         Alert.alert('Pronto!', 'Usuário cadastrado com sucesso!');
-        navigation.navigate('Login');
+        navigation.goBack();
       })
       .catch((error) => {
         setCarregando(false);
@@ -81,7 +81,7 @@ export default function Cadastro({ navigation }) {
 
       <View style={s.rodape}>
         <Text style={s.rodapeTexto}>Já tem uma conta? </Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text style={s.link}>Entrar</Text>
         </TouchableOpacity>
       </View>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CommonActions } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -80,34 +80,36 @@ export default function Perfil({ navigation }) {
         </View>
 
         <View style={s.cartao}>
-          <Pressable
+          <TouchableOpacity
             style={s.linha}
+            activeOpacity={0.7}
             onPress={() => navigation.navigate('Diario')}
           >
             <Text style={[s.linhaTitulo, { flex: 1 }]}>Meu Diário</Text>
             <Ionicons name="chevron-forward" size={22} color={C.azul} />
-          </Pressable>
+          </TouchableOpacity>
         </View>
 
         <Text style={s.secao}>Sua jornada</Text>
         <View style={s.jornada}>
-          {Object.keys(CATEGORIAS).map((nome) => (
-            <Text key={nome} style={s.jornadaItem}>
+          {Object.keys(CATEGORIAS).map((categoria) => (
+            <Text key={categoria} style={s.jornadaItem}>
               <Text style={s.jornadaNumero}>
-                {obras.filter((obra) => obra.categoria === nome).length}
+                {obras.filter((obra) => obra.categoria === categoria).length}
               </Text>{' '}
-              {CATEGORIAS[nome].plural.toLowerCase()}
+              {CATEGORIAS[categoria].plural.toLowerCase()}
             </Text>
           ))}
         </View>
 
-        <Pressable
-          style={({ pressed }) => [s.botaoSair, pressed && { opacity: 0.8 }]}
+        <TouchableOpacity
+          style={s.botaoSair}
+          activeOpacity={0.8}
           onPress={confirmarSaida}
         >
           <Ionicons name="log-out-outline" size={20} color={C.azul} />
           <Text style={s.botaoSairTexto}>Sair da conta</Text>
-        </Pressable>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
@@ -116,9 +118,7 @@ export default function Perfil({ navigation }) {
 const s = StyleSheet.create({
   tela: { flex: 1, backgroundColor: C.fundo },
   conteudo: { paddingHorizontal: 20, paddingTop: 24, paddingBottom: 32 },
-
   titulo: { fontSize: 24, fontWeight: '800', color: C.azul },
-
   identidade: { alignItems: 'center', marginTop: 20 },
   avatar: {
     width: 88,
@@ -131,7 +131,6 @@ const s = StyleSheet.create({
   avatarLetra: { fontSize: 40, fontWeight: '800', color: C.azul },
   nome: { fontSize: 22, fontWeight: '800', color: C.azul, marginTop: 12 },
   desde: { fontSize: 13, color: C.texto, marginTop: 2 },
-
   resumo: { flexDirection: 'row', gap: 10, marginTop: 16 },
   cartaoResumo: {
     flex: 1,
@@ -142,9 +141,7 @@ const s = StyleSheet.create({
   },
   resumoRotulo: { fontSize: 12, color: C.texto },
   resumoValor: { fontSize: 24, fontWeight: '800', color: C.azul, marginTop: 4 },
-
   secao: { fontSize: 18, fontWeight: '700', color: C.azul, marginTop: 16 },
-
   cartao: {
     backgroundColor: C.branco,
     borderRadius: 16,
@@ -157,7 +154,6 @@ const s = StyleSheet.create({
     alignItems: 'center',
   },
   linhaTitulo: { fontSize: 14, fontWeight: '600', color: C.azul },
-
   jornada: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -169,7 +165,6 @@ const s = StyleSheet.create({
   },
   jornadaItem: { fontSize: 13, color: C.texto },
   jornadaNumero: { fontWeight: '700', color: C.azul },
-
   botaoSair: {
     height: 52,
     borderRadius: 14,

@@ -4,6 +4,8 @@ import { C } from './Cores';
 
 export const STATUS = ['Planejado', 'Em andamento', 'Concluído', 'Abandonado'];
 
+export const MESES = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+
 const NOTA = {
   chave: 'nota',
   rotulo: 'Nota (0 a 5)',

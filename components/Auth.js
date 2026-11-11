@@ -1,21 +1,10 @@
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ActivityIndicator,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  Image,
-} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, ScrollView, KeyboardAvoidingView, Platform, StyleSheet, Image,} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { C } from './Cores';
 
 // Componentes visuais compartilhados por Login e Cadastro.
-export function Logo() {
+function Logo() {
   return (
     <View style={s.logoWrap}>
       <View style={s.logoIcone}>

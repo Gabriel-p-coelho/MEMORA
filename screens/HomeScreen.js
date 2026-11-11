@@ -1,12 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { CATEGORIAS, lerObras, dataDaObra } from '../components/Obras';
@@ -355,7 +348,6 @@ const s = StyleSheet.create({
     textAlign: 'center',
     marginTop: 10,
   },
-
   atividade: { marginTop: 28 },
   atividadeTituloSecao: { color: C.azul, fontSize: 17, fontWeight: '700', marginBottom: 14 },
   atividadeLinha: { flexDirection: 'row', alignItems: 'center' },
@@ -364,7 +356,6 @@ const s = StyleSheet.create({
   atividadeTextos: { flex: 1 },
   atividadeTitulo: { fontSize: 14, fontWeight: '600', color: C.azul },
   atividadeDescricao: { fontSize: 13, color: C.texto, marginTop: 4 },
-
   progresso: {
     backgroundColor: C.branco,
     borderRadius: 20,

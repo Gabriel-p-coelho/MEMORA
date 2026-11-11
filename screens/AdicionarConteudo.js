@@ -1,16 +1,7 @@
 import { useEffect, useState } from 'react';
-import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import firebase from '../config/config';
 import { vibrar } from '../components/Haptico';
@@ -157,13 +148,14 @@ export default function AdicionarConteudo({ navigation, route }) {
 
   return (
     <SafeAreaView style={s.tela}>
+      <StatusBar style="dark"/>
       <KeyboardAvoidingView
         style={s.tela}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <View style={s.cabecalho}>
-          <Pressable onPress={() => navigation.goBack()} hitSlop={10} style={s.voltar}>
+          <TouchableOpacity onPress={() => navigation.goBack()} activeOpacity={0.7} hitSlop={10} style={s.voltar}>
             <Ionicons name="chevron-back" size={26} color={C.azul} />
-          </Pressable>
+          </TouchableOpacity>
           <Text style={s.titulo}>
             {editando ? 'Editar conteúdo' : 'Adicionar conteúdo'}
           </Text>
@@ -240,7 +232,6 @@ const s = StyleSheet.create({
     paddingBottom: 20,
     gap: 14,
   },
-
   cabecalho: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -251,7 +242,6 @@ const s = StyleSheet.create({
   },
   voltar: { width: 36, height: 40, justifyContent: 'center' },
   titulo: { fontSize: 22, fontWeight: '800', color: C.azul, marginLeft: 6 },
-
   rodape: {
     flexDirection: 'row',
     gap: 12,

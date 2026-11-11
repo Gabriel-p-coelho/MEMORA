@@ -1,7 +1,7 @@
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Capa } from './Imagens';
-import { CATEGORIAS, STATUS } from './Obras';
+import { CATEGORIAS} from './Obras';
 import { C } from './Cores';
 
 // Parte visual do formulário de obras (usada em AdicionarConteudo).
@@ -86,7 +86,7 @@ export function SecaoImagem({ categoria, uri, onGaleria, onCamera }) {
   );
 }
 
-export function SeletorStatus({ selecionado, onSelecionar, lista = STATUS }) {
+export function SeletorStatus({ selecionado, onSelecionar, lista}) {
   return (
     <View>
       <Rotulo>Status</Rotulo>
@@ -113,7 +113,6 @@ export function SeletorStatus({ selecionado, onSelecionar, lista = STATUS }) {
 
 const s = StyleSheet.create({
   rotulo: { fontSize: 13, fontWeight: '600', color: C.texto, marginBottom: 6 },
-
   categorias: { flexDirection: 'row', gap: 8 },
   categoria: {
     flex: 1,
@@ -129,7 +128,6 @@ const s = StyleSheet.create({
   categoriaAtiva: { backgroundColor: C.azul, borderColor: C.azul },
   categoriaTexto: { fontSize: 11, fontWeight: '600', color: C.azul },
   categoriaTextoAtivo: { color: C.branco },
-
   imagemLinha: { flexDirection: 'row', gap: 12 },
   imagemVazia: {
     width: 108,
@@ -157,7 +155,6 @@ const s = StyleSheet.create({
     gap: 8,
   },
   botaoImagemTexto: { fontSize: 14, fontWeight: '600', color: C.azul },
-
   input: {
     height: 48,
     borderRadius: 14,
@@ -168,7 +165,6 @@ const s = StyleSheet.create({
     fontSize: 15,
     color: C.azul,
   },
-
   statusLista: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   statusChip: {
     height: 40,

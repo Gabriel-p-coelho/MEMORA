@@ -1,11 +1,6 @@
 import { useState } from 'react';
 import { View, Text, TouchableOpacity, Alert, StyleSheet } from 'react-native';
-import {
-  TelaAuth,
-  Titulo,
-  Campo,
-  BotaoPrincipal,
-} from '../components/Auth';
+import { TelaAuth, Titulo, Campo, BotaoPrincipal } from '../components/Auth';
 import firebase from '../config/config';
 import { C } from '../components/Cores';
 

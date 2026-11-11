@@ -1,13 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  Alert,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
@@ -135,11 +127,12 @@ export default function DetalhesObra({ navigation, route }) {
       <StatusBar style="light" />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.scroll}>
         <View style={[s.topo, { height: 250 + insets.top }]}>
-          <Pressable
+          <TouchableOpacity
             onPress={() => navigation.goBack()}
+            activeOpacity={0.7}
             style={[s.voltar, { top: insets.top + 16 }]}>
             <Ionicons name="chevron-back" size={22} color={C.azul} />
-          </Pressable>
+          </TouchableOpacity>
         </View>
 
         <View style={s.capa}>
@@ -218,7 +211,6 @@ export default function DetalhesObra({ navigation, route }) {
 const s = StyleSheet.create({
   tela: { flex: 1, backgroundColor: C.fundo },
   scroll: { paddingBottom: 24 },
-
   topo: {
     backgroundColor: C.azul,
     borderBottomLeftRadius: 28,
@@ -234,7 +226,6 @@ const s = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-
   capa: {
     alignSelf: 'center',
     marginTop: -170,
@@ -257,7 +248,6 @@ const s = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-
   conteudo: { paddingHorizontal: 20, paddingTop: 16, gap: 14 },
   cabecalhoTexto: { alignItems: 'center', gap: 2 },
   titulo: {
@@ -268,7 +258,6 @@ const s = StyleSheet.create({
     textAlign: 'center',
   },
   subtitulo: { fontSize: 14, color: C.texto, textAlign: 'center' },
-
   linhaCartoes: { flexDirection: 'row', gap: 10 },
   cartao: {
     flex: 1,
@@ -286,15 +275,12 @@ const s = StyleSheet.create({
   },
   cartaoTitulo: { fontSize: 13, fontWeight: '600', color: C.azul },
   pequeno: { fontSize: 12, color: C.texto },
-
   statusLinha: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   statusTexto: { fontSize: 14, fontWeight: '600', color: C.azul },
-
   notaLinha: { flexDirection: 'row', alignItems: 'baseline' },
   notaNumero: { fontSize: 24, fontWeight: '800', color: C.azul },
   notaDe: { fontSize: 13, fontWeight: '600', color: C.texto },
   estrelas: { flexDirection: 'row', gap: 2 },
-
   linhaProgresso: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -307,9 +293,7 @@ const s = StyleSheet.create({
     overflow: 'hidden',
   },
   barraPreenchida: { height: 8, borderRadius: 4, backgroundColor: C.menta },
-
   opiniao: { fontSize: 14, lineHeight: 21, color: C.azul },
-
   rodape: {
     flexDirection: 'row',
     gap: 10,

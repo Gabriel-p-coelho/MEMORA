@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { dataDaObra, lerObras } from '../components/Obras';
+import { MESES, dataDaObra, lerObras } from '../components/Obras';
 import { C } from '../components/Cores';
-
-const MESES = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
 
 // Texto do dia na linha do tempo: 'HOJE · 5 NOV', 'ONTEM · ...' ou só a data.
 function rotuloDoDia(tempo) {
@@ -14,7 +12,7 @@ function rotuloDoDia(tempo) {
   const hoje = new Date();
   hoje.setHours(0, 0, 0, 0);
 
-  let texto = dia.getDate() + ' ' + MESES[dia.getMonth()];
+  let texto = dia.getDate() + ' ' + MESES[dia.getMonth()].toUpperCase();
   if (dia.getFullYear() !== hoje.getFullYear()) texto += ' ' + dia.getFullYear();
 
   const diferenca = Math.round((hoje - dia) / 86400000);
@@ -91,9 +89,9 @@ export default function Diario({ navigation }) {
     <SafeAreaView style={s.tela}>
       <ScrollView contentContainerStyle={s.conteudo} showsVerticalScrollIndicator={false}>
         <View style={s.cabecalho}>
-          <Pressable onPress={() => navigation.goBack()} style={s.voltar}>
+          <TouchableOpacity onPress={() => navigation.goBack()} activeOpacity={0.7} style={s.voltar}>
             <Ionicons name="arrow-back" size={24} color={C.azul} />
-          </Pressable>
+          </TouchableOpacity>
           <Text style={s.titulo}>Meu Diário</Text>
         </View>
         <Text style={s.subtitulo}>Sua linha do tempo cultural</Text>
@@ -125,13 +123,11 @@ export default function Diario({ navigation }) {
 const s = StyleSheet.create({
   tela: { flex: 1, backgroundColor: C.fundo },
   conteudo: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 32 },
-
   cabecalho: { flexDirection: 'row', alignItems: 'center' },
   voltar: { width: 44, height: 44, justifyContent: 'center', marginLeft: -10 },
   titulo: { fontSize: 22, fontWeight: '800', color: C.azul, letterSpacing: -0.2 },
   subtitulo: { fontSize: 13, color: C.texto, marginBottom: 24 },
   vazio: { fontSize: 14, color: C.texto, textAlign: 'center', marginTop: 40 },
-
   linhaDoTempo: { paddingLeft: 22, gap: 14 },
   linha: {
     position: 'absolute',
@@ -155,7 +151,6 @@ const s = StyleSheet.create({
   },
   pontoAtual: { backgroundColor: C.menta },
   diaRotulo: { fontSize: 12, fontWeight: '600', color: C.texto },
-
   cartao: {
     backgroundColor: C.branco,
     borderRadius: 16,
@@ -169,7 +164,6 @@ const s = StyleSheet.create({
   cartaoDetalhe: { fontSize: 13, color: C.texto },
   selo: { backgroundColor: C.menta, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 },
   seloTexto: { fontSize: 11, fontWeight: '600', color: C.azul },
-
   opiniaoBox: { borderTopWidth: 1, borderTopColor: C.lavanda, paddingTop: 9, marginTop: 4 },
   opiniao: { fontSize: 14, lineHeight: 20, color: C.azul },
 });

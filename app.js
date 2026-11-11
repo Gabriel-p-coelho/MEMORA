@@ -4,9 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import {
-  SafeAreaProvider,
-} from 'react-native-safe-area-context';
+import { SafeAreaProvider,} from 'react-native-safe-area-context';
 
 import Login from './screens/Login';
 import Cadastro from './screens/Cadastro';
