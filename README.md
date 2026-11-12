@@ -2,15 +2,16 @@
 
 **Sua história, em cada descoberta.**
 
-<p align="center">
+<p align="left">
   <img src="assets/Logo.png" width="140" alt="Logo do Memora">
 </p>
 
-O **Memora** é um aplicativo mobile desenvolvido em React Native que centraliza o registro de experiências culturais e de entretenimento em uma única plataforma.
-A proposta é permitir que os usuários organizem filmes, séries, livros, jogos e álbuns musicais em uma biblioteca pessoal, registrando avaliações, opiniões, progresso e histórico de atividades.
+O **Memora** é um aplicativo mobile desenvolvido em React Native que centraliza o registro de experiências culturais e de entretenimento em uma única plataforma, A proposta é permitir que os usuários organizem filmes, séries, livros, jogos e álbuns musicais em uma biblioteca pessoal, registrando avaliações, opiniões, progresso e histórico de atividades.
 Mais do que um catálogo, o Memora transforma os registros cotidianos em um arquivo pessoal de experiências culturais, permitindo acompanhar hábitos e revisitar descobertas ao longo do tempo.
 
 > Projeto acadêmico desenvolvido para a disciplina de **CCP150 – Desenvolvimento de Aplicativos Móveis**, do curso de Ciência da Computação.
+
+> **Projeto no Expo Snack:** [Abrir o Memora no Expo Snack](LINK_DO_SNACK)
 
 ---
 
@@ -42,7 +43,7 @@ Mais do que um catálogo, o Memora transforma os registros cotidianos em um arqu
 
 ### Motivação
 
-Quem consome vários tipos de entretenimento costuma espalhar avaliações e registros por diferentes aplicativos, ou simplesmente esquece o que já assistiu, leu ou jogou e o que achou de cada experiência. O Memora nasceu da ideia de reunir tudo em um único lugar, com foco na **experiência pessoal** do usuário com cada obra, e não apenas em um catálogo de títulos.
+Quem consome vários tipos de entretenimento costuma espalhar avaliações e registros por diferentes aplicativos, ou simplesmente esquece o que já assistiu, leu ou jogou e o que achou de cada experiência. O Memora nasceu da ideia de reunir tudo em um único lugar, com foco na experiência pessoal do usuário com cada obra, e não apenas em um catálogo de títulos.
 
 ### Objetivos
 
@@ -64,7 +65,6 @@ Quem consome vários tipos de entretenimento costuma espalhar avaliações e reg
 | Autenticação de usuários | Firebase Authentication com e-mail e senha. |
 | Recursos nativos do dispositivo | Câmera, galeria de imagens e feedback háptico. |
 | Imagens e interface com feedback claro | Capas escolhidas pelo usuário, validações, alertas de confirmação, estados vazios e vibração. |
-| Código e README no GitHub | Este repositório. |
 
 ---
 
@@ -91,10 +91,7 @@ Quem consome vários tipos de entretenimento costuma espalhar avaliações e reg
 ### Armazenamento de dados e imagens
 
 O projeto utiliza o Firebase Realtime Database para armazenar as informações das obras e os dados relacionados aos usuários.
-
-As imagens personalizadas seguem uma estratégia diferente: são copiadas e armazenadas localmente no dispositivo, enquanto o banco de dados mantém apenas o nome do arquivo correspondente.
-
-Essa abordagem permite que o usuário utilize capas e imagens próprias sem depender de serviços externos de armazenamento de imagens.
+As imagens personalizadas seguem uma estratégia diferente: são copiadas e armazenadas localmente no dispositivo, enquanto o banco de dados mantém apenas o nome do arquivo correspondente, Essa abordagem permite que o usuário utilize capas e imagens próprias sem depender de serviços externos de armazenamento de imagens.
 
 ### 2.1. Inteligência Artificial como Ferramenta de Apoio
 
@@ -114,7 +111,6 @@ A Inteligência Artificial foi utilizada como recurso de apoio técnico e aprend
 ## 3. Protótipo de Design
 
 Antes da implementação do aplicativo, foi desenvolvido um protótipo de interface no **Figma**, com o objetivo de estabelecer a identidade visual do Memora e orientar a construção das telas.
-
 O protótipo serviu como referência para a organização dos elementos visuais, hierarquia das informações, navegação e experiência do usuário.
 
 ### Identidade visual
@@ -215,7 +211,6 @@ O aplicativo permite personalizar os registros utilizando imagens escolhidas pel
 - Tirar fotografias utilizando a câmera do dispositivo.
 - Recortar a imagem em formato retrato (3:4).
 - Visualizar uma prévia antes de salvar.
-- Substituir imagens de obras já cadastradas.
 - Armazenar as imagens localmente no dispositivo.
 
 As imagens são associadas aos respectivos registros por meio de seus nomes de arquivo. Quando uma obra não possui imagem, ou o arquivo não está disponível, o aplicativo exibe o ícone da categoria.
@@ -272,15 +267,13 @@ A tela de perfil apresenta um resumo da jornada cultural do usuário.
 
 ### 4.9. Feedback Háptico
 
-O aplicativo utiliza a biblioteca Expo Haptics para oferecer respostas táteis durante interações importantes.
+O aplicativo utiliza a biblioteca Expo Haptics para oferecer respostas táteis durante interações importantes, com o objetivo de proporcionar uma resposta física discreta que complemente o feedback visual da interface.
 
 O feedback háptico é acionado em três situações:
 
 - Após salvar uma obra.
 - Após excluir uma obra.
 - Após sair da conta.
-
-O objetivo é proporcionar uma resposta física discreta que complemente o feedback visual da interface.
 
 ---
 
@@ -384,7 +377,7 @@ O vídeo apresenta o aplicativo em funcionamento, com os principais fluxos de ut
 6. Consulta ao diário cultural e às estatísticas.
 7. Visualização do perfil e encerramento da sessão.
 
-### Telas do aplicativo
+### Algumas telas do aplicativo
 
 <table>
   <tr>
@@ -415,22 +408,7 @@ O Memora foi desenvolvido no **Expo Snack** e testado no **Expo Go**, em um celu
 1. No [console do Firebase](https://console.firebase.google.com/), crie um projeto.
 2. Em **Authentication**, ative o método de login **E-mail/senha**.
 3. Em **Realtime Database**, crie um banco de dados.
-4. Na aba **Regras** do Realtime Database, defina regras para que cada usuário acesse somente os próprios registros:
-
-```json
-{
-  "rules": {
-    "usuarios": {
-      "$uid": {
-        ".read": "auth != null && auth.uid === $uid",
-        ".write": "auth != null && auth.uid === $uid"
-      }
-    }
-  }
-}
-```
-
-5. Nas configurações do projeto, registre um app Web e copie o objeto de configuração.
+4. Nas configurações do projeto, registre um app Web e copie o objeto de configuração.
 
 ### Passo 2 — Configurar as credenciais
 
@@ -463,6 +441,10 @@ Depois de configurar o Firebase (passos 1 e 2), escaneie o QR Code exibido no te
 
 ### Opção B — Executar no Expo Snack
 
+O projeto completo está disponível no Expo Snack: **[Abrir o Memora no Expo Snack](LINK_DO_SNACK)**
+
+Para criar o seu próprio Snack a partir do repositório:
+
 1. Acesse [snack.expo.dev](https://snack.expo.dev/) e crie um novo Snack com o **SDK 54**.
 2. Crie os arquivos e as pastas do projeto (`App.js`, `components/`, `config/`, `screens/` e `assets/Logo.png`) com o conteúdo deste repositório.
 3. Em **Dependencies**, adicione `firebase@8.10.1`. As demais bibliotecas são sugeridas pelo próprio Snack ao detectar os `import`.
@@ -488,7 +470,8 @@ O principal desafio de modelagem foi lidar com cinco categorias diferentes de ob
 
 Também aprendi a lidar com limitações do ambiente de desenvolvimento. No Expo Snack, foi necessário usar a versão 8.10.1 do Firebase e a API legada do Expo File System, depois de testar alternativas que não funcionaram. A decisão de guardar as imagens no próprio dispositivo, e não na nuvem, foi uma escolha consciente por simplicidade: o banco guarda apenas o nome do arquivo, ao custo de a imagem não acompanhar o usuário em outro aparelho.
 
-Na etapa final, revisei o código inteiro: unifiquei as cores em um único arquivo, removi trechos sem uso e simplifiquei telas que estavam longas demais. Essa revisão me mostrou que organizar e simplificar o código é tão importante quanto fazê-lo funcionar.
+Na etapa final, revisei o código inteiro: unifiquei as cores em um único arquivo e removi trechos sem uso. 
+Essa revisão me mostrou que organizar e simplificar o código é tão importante quanto fazê-lo funcionar.
 
 ### Aprendizados
 
@@ -502,7 +485,6 @@ Na etapa final, revisei o código inteiro: unifiquei as cores em um único arqui
 - Armazenamento local de arquivos no dispositivo.
 - Integração com recursos nativos por meio de feedback háptico.
 - Construção de estatísticas a partir de dados persistidos.
-- Utilização de Inteligência Artificial como ferramenta de apoio à programação e resolução de problemas técnicos.
 
 ### Limitações atuais
 
