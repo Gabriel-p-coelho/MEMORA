@@ -2,7 +2,9 @@
 
 **Sua história, em cada descoberta.**
 
-![Memora](assets/Logo.png)
+<p align="center">
+  <img src="assets/Logo.png" width="140" alt="Logo do Memora">
+</p>
 
 O **Memora** é um aplicativo mobile desenvolvido em React Native que centraliza o registro de experiências culturais e de entretenimento em uma única plataforma.
 A proposta é permitir que os usuários organizem filmes, séries, livros, jogos e álbuns musicais em uma biblioteca pessoal, registrando avaliações, opiniões, progresso e histórico de atividades.
@@ -348,8 +350,7 @@ MEMORA/
 ├── config/
 │   └── config.js
 │
-├── docs/
-│   └── screenshots/
+├── screenshots/
 │
 └── screens/
     ├── AdicionarConteudo.js
@@ -387,13 +388,13 @@ O vídeo apresenta o aplicativo em funcionamento, com os principais fluxos de ut
 
 <table>
   <tr>
-    <td align="center"><img src="docs/screenshots/01-inicio.png" width="220" alt="Tela Início"><br><b>Início</b></td>
-    <td align="center"><img src="docs/screenshots/02-biblioteca.png" width="220" alt="Tela Biblioteca"><br><b>Biblioteca</b></td>
-    <td align="center"><img src="docs/screenshots/03-adicionar.png" width="220" alt="Tela Adicionar conteúdo"><br><b>Adicionar conteúdo</b></td>
+    <td align="center"><img src="screenshots/01-inicio.png" width="220" alt="Tela Início"><br><b>Início</b></td>
+    <td align="center"><img src="screenshots/02-biblioteca.png" width="220" alt="Tela Biblioteca"><br><b>Biblioteca</b></td>
+    <td align="center"><img src="screenshots/03-adicionar.png" width="220" alt="Tela Adicionar conteúdo"><br><b>Adicionar conteúdo</b></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/04-detalhes.png" width="220" alt="Tela Detalhes da obra"><br><b>Detalhes da obra</b></td>
-    <td align="center"><img src="docs/screenshots/05-estatisticas.png" width="220" alt="Tela Estatísticas"><br><b>Estatísticas</b></td>
+    <td align="center"><img src="screenshots/04-detalhes.png" width="220" alt="Tela Detalhes da obra"><br><b>Detalhes da obra</b></td>
+    <td align="center"><img src="screenshots/05-estatisticas.png" width="220" alt="Tela Estatísticas"><br><b>Estatísticas</b></td>
   </tr>
 </table>
 
@@ -529,3 +530,4 @@ Como possíveis evoluções futuras, o projeto poderá receber:
 Estudante de Ciência da Computação.
 - [GitHub](https://github.com/Gabriel-p-coelho)
 - [LinkedIn](https://www.linkedin.com/in/gabriel-pacioni-coelho/)
+Projeto acadêmico desenvolvido para a disciplina de Desenvolvimento de Aplicativos Móveis.
