@@ -110,10 +110,7 @@ export default function App() {
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="Cadastro" component={Cadastro} />
           <Stack.Screen name="Tabs" component={Abas} />
-          <Stack.Screen
-            name="AdicionarConteudo"
-            component={AdicionarConteudo}
-          />
+          <Stack.Screen name="AdicionarConteudo" component={AdicionarConteudo} />
           <Stack.Screen name="DetalhesObra" component={DetalhesObra} />
           <Stack.Screen name="Diario" component={Diario} />
         </Stack.Navigator>
