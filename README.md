@@ -512,4 +512,5 @@ Como possíveis evoluções futuras, o projeto poderá receber:
 Estudante de Ciência da Computação.
 - [GitHub](https://github.com/Gabriel-p-coelho)
 - [LinkedIn](https://www.linkedin.com/in/gabriel-pacioni-coelho/)
+  
 Projeto acadêmico desenvolvido para a disciplina de Desenvolvimento de Aplicativos Móveis.
