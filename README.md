@@ -11,7 +11,7 @@ Mais do que um catálogo, o Memora transforma os registros cotidianos em um arqu
 
 > Projeto acadêmico desenvolvido para a disciplina de **CCP150 – Desenvolvimento de Aplicativos Móveis**, do curso de Ciência da Computação.
 
-> **Projeto no Expo Snack:** [Abrir o Memora no Expo Snack](LINK_DO_SNACK)
+> **Projeto no Expo Snack:** [Abrir o Memora no Expo Snack](https://snack.expo.dev/@gabriel_pacioni/memora)
 
 ---
 
@@ -420,7 +420,7 @@ Depois de configurar o Firebase (passos 1 e 2), escaneie o QR Code exibido no te
 
 ### Opção B — Executar no Expo Snack
 
-O projeto completo está disponível no Expo Snack: **[Abrir o Memora no Expo Snack](LINK_DO_SNACK)**
+O projeto completo está disponível no Expo Snack: **[Abrir o Memora no Expo Snack](https://snack.expo.dev/@gabriel_pacioni/memora)**
 
 Para criar o seu próprio Snack a partir do repositório:
 
