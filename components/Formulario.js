@@ -52,7 +52,7 @@ export function SeletorCategoria({ selecionada, onSelecionar }) {
   );
 }
 
-// Prévia da imagem (uri) + botões para escolher na galeria ou tirar foto.
+// Prévia da imagem + botões para escolher na galeria ou tirar foto.
 // Escolher de novo substitui a imagem anterior.
 export function SecaoImagem({ categoria, uri, onGaleria, onCamera }) {
   const { imagem } = CATEGORIAS[categoria];

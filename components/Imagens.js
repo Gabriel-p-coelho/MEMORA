@@ -8,7 +8,7 @@ import * as FileSystem from 'expo-file-system/legacy';
 const pasta = FileSystem.documentDirectory + 'memora/images/';
 
 // Caminho completo de uma imagem salva (ou null se a obra não tem imagem).
-// Se o arquivo não existir mais, o componente Capa cai no ícone padrão (onError).
+// Se o arquivo não existir mais, o componente Capa cai no ícone padrão.
 export function caminhoDaImagem(nome) {
   return nome ? pasta + nome : null;
 }
@@ -46,7 +46,7 @@ export async function escolherImagem(origem) {
 }
 
 // Copia a imagem temporária para a pasta do app e devolve o nome do arquivo (ex.: "-Abc123_1793652898745.jpg").
-// O id da obra no nome evita conflitos; o horário muda o nome ao trocar a imagem (evita cache da antiga).
+// O id da obra no nome evita conflitos; o horário muda o nome ao trocar a imagem.
 export async function salvarImagem(uriTemporaria, idObra) {
   await FileSystem.makeDirectoryAsync(pasta, { intermediates: true });
 

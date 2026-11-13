@@ -65,7 +65,7 @@ export default function AdicionarConteudo({ navigation, route }) {
   }
 
   // Valida e salva: update se estiver editando, set com id novo se for obra nova.
-  // A imagem é copiada para o aparelho ANTES de gravar no banco; se a cópia falhar, a obra não é salva.
+  // A imagem é copiada para o aparelho antes de gravar no banco; se a cópia falhar, a obra não é salva.
   async function salvar() {
     if (salvando) return;
 

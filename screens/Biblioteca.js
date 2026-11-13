@@ -269,7 +269,7 @@ const s = StyleSheet.create({
   },
   capaObra: {
     width: '100%',
-    aspectRatio: 3 / 4, // formato retrato, igual ao recorte da imagem
+    aspectRatio: 3 / 4,
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',

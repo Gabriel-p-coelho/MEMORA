@@ -15,8 +15,7 @@ const NOTA = {
 };
 
 // Configuração de cada categoria (usada no formulário, biblioteca, estatísticas...).
-// "campos" aparecem antes do status e "progresso" depois dele.
-// Cada item é uma linha do formulário: os campos da linha dividem a largura igualmente.
+// Cada item é uma linha do formulário: 
 export const CATEGORIAS = {
   Filme: {
     plural: 'Filmes',
@@ -91,7 +90,7 @@ export const CATEGORIAS = {
   },
 };
 
-// Lê as obras do usuário em tempo real (mesmo padrão da aula: ref.on('value')).
+// Lê as obras do usuário em tempo real.
 // Chama aoMudar(lista) a cada mudança e devolve a função que para de escutar.
 export function lerObras(aoMudar) {
   const uid = firebase.auth().currentUser.uid;

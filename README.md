@@ -3,7 +3,7 @@
 **Sua história, em cada descoberta.**
 
 <p align="left">
-  <img src="assets/Logo.png" width="140" alt="Logo do Memora">
+  <img src="assets/Logo.png" width="100" alt="Logo do Memora">
 </p>
 
 O **Memora** é um aplicativo mobile desenvolvido em React Native que centraliza o registro de experiências culturais e de entretenimento em uma única plataforma, A proposta é permitir que os usuários organizem filmes, séries, livros, jogos e álbuns musicais em uma biblioteca pessoal, registrando avaliações, opiniões, progresso e histórico de atividades.
@@ -74,16 +74,8 @@ Quem consome vários tipos de entretenimento costuma espalhar avaliações e reg
 |---|---|---|
 | Linguagem | JavaScript | Linguagem de programação utilizada no projeto. |
 | Framework | React Native | Desenvolvimento das interfaces mobile. |
-| Ambiente | Expo (SDK 54) | Ambiente de desenvolvimento e execução. |
-| Navegação | React Navigation (Native Stack e Bottom Tabs) | Gerenciamento da navegação entre telas. |
 | Backend | Firebase Authentication (v8.10.1) | Cadastro e autenticação de usuários. |
 | Backend | Firebase Realtime Database (v8.10.1) | Armazenamento e sincronização dos dados. |
-| Recursos nativos | Expo Image Picker | Seleção de imagens pela galeria e captura pela câmera. |
-| Recursos nativos | Expo File System | Armazenamento local das imagens no dispositivo. |
-| Recursos nativos | Expo Haptics | Feedback tátil nas interações. |
-| Interface | Expo Vector Icons | Ícones da interface. |
-| Interface | React Native Safe Area Context | Adequação das telas às áreas seguras do dispositivo. |
-| Interface | Expo Status Bar | Controle do estilo da barra de status. |
 | Ferramentas | Expo Snack e Expo Go | Desenvolvimento e teste do aplicativo no celular. |
 | Ferramentas | Figma | Protótipo e identidade visual. |
 | Ferramentas | Git e GitHub | Controle de versão e hospedagem do código. |
@@ -156,7 +148,7 @@ A tela inicial reúne um resumo da atividade recente do usuário.
 - Atalho para cadastrar uma nova obra.
 - Atalho "Registrar progresso", que lista as obras em andamento e abre a edição da obra escolhida.
 - Atividade recente, com as últimas obras registradas ou atualizadas.
-- Convite para cadastrar a primeira obra quando a biblioteca ainda está vazia.
+- Botão para cadastrar a primeira obra quando a biblioteca ainda está vazia.
 
 ### 4.3. Biblioteca Cultural
 
@@ -412,20 +404,7 @@ O Memora foi desenvolvido no **Expo Snack** e testado no **Expo Go**, em um celu
 
 ### Passo 2 — Configurar as credenciais
 
-No arquivo `config/config.js`, preencha o objeto `firebaseConfig` com as credenciais do seu projeto:
-
-```js
-const firebaseConfig = {
-  apiKey: "SUA_API_KEY",
-  authDomain: "SEU_PROJETO.firebaseapp.com",
-  databaseURL: "https://SEU_PROJETO-default-rtdb.firebaseio.com",
-  projectId: "SEU_PROJETO",
-  storageBucket: "SEU_PROJETO.appspot.com",
-  messagingSenderId: "SEU_SENDER_ID",
-  appId: "SEU_APP_ID",
-};
-```
-
+No arquivo `config/config.js`, preencha o objeto `firebaseConfig` com as credenciais do seu projeto.
 O repositório não inclui credenciais. Não publique as suas em repositórios públicos.
 
 ### Opção A — Executar localmente
@@ -454,7 +433,6 @@ Para criar o seu próprio Snack a partir do repositório:
 ### Observações importantes
 
 - **Firebase na versão 8.10.1:** o código usa a sintaxe `import firebase from "firebase"`, que só funciona nessa versão. Versões 9 ou superiores exigem outra sintaxe.
-- **Autenticação:** o login com Firebase Authentication não funciona no preview web do Snack. Use o Expo Go.
 - **Imagens:** o código importa `expo-file-system/legacy` de propósito, pois é a API que foi validada no Expo Go com o SDK 54.
 - **Permissões:** na primeira vez que usar a câmera, o aplicativo solicitará a permissão de acesso.
 
@@ -468,7 +446,7 @@ O desenvolvimento do Memora proporcionou a aplicação prática de conceitos de 
 
 O principal desafio de modelagem foi lidar com cinco categorias diferentes de obras dentro de um único fluxo. Em vez de criar um formulário para cada categoria, concentrei a configuração delas em um único arquivo (`Obras.js`) e deixei que as telas se adaptassem a essa configuração. Isso reduziu repetição de código e deixou o aplicativo mais fácil de evoluir.
 
-Também aprendi a lidar com limitações do ambiente de desenvolvimento. No Expo Snack, foi necessário usar a versão 8.10.1 do Firebase e a API legada do Expo File System, depois de testar alternativas que não funcionaram. A decisão de guardar as imagens no próprio dispositivo, e não na nuvem, foi uma escolha consciente por simplicidade: o banco guarda apenas o nome do arquivo, ao custo de a imagem não acompanhar o usuário em outro aparelho.
+Também aprendi a lidar com limitações do ambiente de desenvolvimento. No Expo Snack, foi necessário usar a API legada do Expo File System, depois de testar alternativas que não funcionaram. A decisão de guardar as imagens no próprio dispositivo, e não na nuvem, foi uma escolha consciente por simplicidade: o banco guarda apenas o nome do arquivo, ao custo de a imagem não acompanhar o usuário em outro aparelho.
 
 Na etapa final, revisei o código inteiro: unifiquei as cores em um único arquivo e removi trechos sem uso. 
 Essa revisão me mostrou que organizar e simplificar o código é tão importante quanto fazê-lo funcionar.
@@ -512,4 +490,3 @@ Como possíveis evoluções futuras, o projeto poderá receber:
 Estudante de Ciência da Computação.
 - [GitHub](https://github.com/Gabriel-p-coelho)
 - [LinkedIn](https://www.linkedin.com/in/gabriel-pacioni-coelho/)
-Projeto acadêmico desenvolvido para a disciplina de Desenvolvimento de Aplicativos Móveis.
