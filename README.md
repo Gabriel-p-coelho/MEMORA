@@ -483,9 +483,8 @@ As possible future improvements, the project could receive:
 
 ---
 
-## 9. Author
+## Author
 
 **Gabriel Pacioni Coelho**
-Computer Science student.
-- [GitHub](https://github.com/Gabriel-p-coelho)
-- [LinkedIn](https://www.linkedin.com/in/gabriel-pacioni-coelho/)
+
+[GitHub](https://github.com/Gabriel-p-coelho) · [Portfolio](https://portfoliogabrielpacioni.netlify.app/) · [LinkedIn](https://www.linkedin.com/in/gabriel-pacioni-coelho-b73168310)
